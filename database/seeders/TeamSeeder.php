@@ -11,16 +11,12 @@ class TeamSeeder extends Seeder
     {
         DB::table('teams')->insert([
             [
-                'name' => 'The worst technical team ever',
-                'team_leader_id' => 1,
-                'project_manager_id' => 3,
+                'name' => 'The worst team ever',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'name' => 'The best team ever',
-                'team_leader_id' => 2,
-                'project_manager_id' => 4,
                 'created_at' => now(),
                 'updated_at' => now()
             ]

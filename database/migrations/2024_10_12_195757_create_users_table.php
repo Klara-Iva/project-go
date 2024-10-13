@@ -21,7 +21,8 @@ class CreateUsersTable extends Migration
             $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
          });
     }
-
+    
+//TODO make user-team table for multiple teams for one user
     public function down()
     {
         Schema::dropIfExists('users');

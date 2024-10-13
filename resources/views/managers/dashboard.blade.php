@@ -18,7 +18,6 @@
             align-items: center;
             font-family: Arial, sans-serif;
             color: #ffffff;
-            height: 100vh;
         }
 
         .container {
@@ -31,7 +30,7 @@
             color: #ffffff;
         }
 
-        .h1 {
+        h1 {
             color: #ffffff;
             text-align: center;
             margin-bottom: 20px;

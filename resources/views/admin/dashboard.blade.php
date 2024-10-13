@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -110,7 +110,6 @@
 <body>
 
     <div class="top-right-buttons">
-        <a href="{{ route('vacation.request.view') }}" class="btn btn-primary">New vacation Request</a>
         <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
             @csrf
             <button type="submit" class="btn-logout">Logout</button>

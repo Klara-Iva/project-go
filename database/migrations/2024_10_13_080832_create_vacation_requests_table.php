@@ -12,10 +12,10 @@ class CreateVacationRequestsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->date('start_date');
-            $table->date('end_date');
+            $table->date('end_date')->nullable(true);
             $table->integer('days_requested');
-            $table->boolean('team_leader_approved')->default(false);
-            $table->boolean('project_manager_approved')->default(false);
+            $table->enum('team_leader_approved', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('project_manager_approved', ['pending', 'approved', 'rejected'])->default('pending');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
