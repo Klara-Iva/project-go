@@ -18,14 +18,18 @@ class VacationRequestController extends Controller
     {
         $user = Auth::user();
 
-        $validated = $request->validate([
+        $validated = $request->validate([//TODO ako validacija faila, nece ni doci do flash poruke, dodaj checks
             'start_date' => 'required|date',
             'days_off' => 'required|integer|min:1|max:' . $user->annual_leave_days,
         ]);
 
         if ($validated['days_off'] > $user->annual_leave_days) {
             session()->flash('success', 'You cannot request more days off than the available annual leave days.');
-            return redirect()->route('employee.dashboard');
+            if ($user->role_id === 2 || $user->role_id === 3) {//TODO this still doesnt work
+                return redirect()->route('managers.dashboard');
+            } else {
+                return redirect()->route('employee.dashboard');
+            }
         }
 
         //  TODO button sendrequest loads a new page and doesnt send notification to user

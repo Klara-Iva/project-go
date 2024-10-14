@@ -13,19 +13,17 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->unsignedBigInteger('role_id'); 
-            $table->unsignedBigInteger('team_id')->nullable(true);
+            $table->unsignedBigInteger('role_id');
             $table->integer('annual_leave_days')->default(20);
             $table->timestamps();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-            $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
-         });
+
+        });
     }
-    
-//TODO make user-team table for multiple teams for one user
+
     public function down()
     {
         Schema::dropIfExists('users');
     }
-    
+
 }

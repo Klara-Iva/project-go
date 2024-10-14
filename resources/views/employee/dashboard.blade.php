@@ -12,6 +12,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            background-attachment: fixed;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -158,7 +159,7 @@
                                     <p class="card-text">Team leader approval: {{ $request->team_leader_approved }}</p>
                                     <p class="card-text"
                                         style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
-                                                                                               {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
+                                                                                                       {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
                                         {{ $request->status }}
                                     </p>
                                 </div>

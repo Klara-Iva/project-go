@@ -27,3 +27,9 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
 Route::get('/employee/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
 
 Route::get('/managers/dashboard', [ManagerController::class, 'dashboard'])->name('managers.dashboard');
+
+Route::get('/request/{id}/details', [ManagerController::class, 'showRequestDetails'])->name('request.details');
+
+Route::post('/request/{id}/approve', [ManagerController::class, 'approve'])->name('vacation.approve');
+
+Route::post('/request/{id}/reject', [ManagerController::class, 'reject'])->name('vacation.reject');

@@ -18,4 +18,5 @@ class AdminController extends Controller
         $vacationRequests = VacationRequest::with('user')->get();
         return view('admin.dashboard', compact('user', 'vacationRequests'));
     }
+    
 }

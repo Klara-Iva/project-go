@@ -12,6 +12,7 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            background-attachment: fixed;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -27,6 +28,7 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 100px;
             width: 100%;
+            max-width: 1400px;
             color: #ffffff;
         }
 
@@ -80,10 +82,28 @@
             background-color: rgba(0, 0, 0, 0.5);
             color: #ffffff;
             border-radius: 21px;
+            margin-bottom: 20px;
+            width: 100%;
         }
 
-        .card p {
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .card-text {
             margin: 0;
+            padding-right: 10px;
+            flex: 1;
         }
 
         .btn-primary {
@@ -103,6 +123,25 @@
             top: 20px;
             left: 20px;
         }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 21px;
+            margin-bottom: 10px;
+        }
+
+        .header-row .header-text {
+            margin-left: 40px;
+            flex: 1;
+            text-align: center;
+            padding-right: 0px;
+            font-weight: bold;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -116,31 +155,63 @@
         </form>
     </div>
 
-
-
     <div class="welcome-message">
         Welcome {{ $user->name }} ({{ $user->role->role_name }})
     </div>
 
     <div class="container">
 
+        <h1>Your teams Vacation requests:</h1>
         @if (session('success'))
             <div class="alert alert-success success-alert">
                 {{ session('success') }}
             </div>
         @endif
         <script>
-
             setTimeout(function () {
                 var alert = document.querySelector('.success-alert');
                 if (alert) {
                     alert.style.display = 'none';
                 }
-            }, 2000); 
+            }, 2000);
         </script>
 
-        <h1>Manager Dashboard</h1>
-        <p>Dobrodošli na managerski panel!</p>
+
+        <div class="header-row">
+            <div class="header-text">Name</div>
+            <div class="header-text">Start Date</div>
+            <div class="header-text">Duration</div>
+            <div class="header-text">Project Manager Approval</div>
+            <div class="header-text">Team Leader Approval</div>
+            <div class="header-text">Status</div>
+            <div class="header-text">Buttons</div>
+        </div>
+
+        <div class="container2 mt-4">
+            @if ($vacationRequests->isEmpty())
+                <p>No vacation requests to show.</p>
+            @else
+                @foreach ($vacationRequests as $request)
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="details">
+                                <p class="card-text">{{ $request->user->name }}</p>
+                                <p class="card-text">{{ $request->start_date }}</p>
+                                <p class="card-text">{{ $request->days_requested }} days</p>
+                                <p class="card-text">{{ $request->project_manager_approved }}</p>
+                                <p class="card-text">{{ $request->team_leader_approved }}</p>
+                                <p class="card-text"
+                                    style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
+                                                        {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
+                                    {{ $request->status }}
+                                </p>
+                            </div>
+                            <a href="{{ route('request.details', $request->id) }}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+        </div>
 
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
