@@ -17,7 +17,6 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'team_id',
         'annual_leave_days',
     ];
 
@@ -37,7 +36,6 @@ class User extends Authenticatable
     public function teams()
     {
         return $this->belongsToMany(Team::class, 'user_team', 'user_id', 'team_id');
-
     }
 
     public function projects(): HasMany

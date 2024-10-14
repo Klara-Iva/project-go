@@ -78,6 +78,14 @@
             width: 300px;
         }
 
+        .alert-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 300px;
+        }
+
         .card {
             background-color: rgba(0, 0, 0, 0.5);
             color: #ffffff;
@@ -162,18 +170,33 @@
     <div class="container">
 
         <h1>Your teams Vacation requests:</h1>
+
         @if (session('success'))
             <div class="alert alert-success success-alert">
                 {{ session('success') }}
             </div>
         @endif
+
+        @if (session('alert'))
+            <div class="alert alert-danger alert-message">
+                {{ session('alert') }}
+            </div>
+        @endif
+
         <script>
             setTimeout(function () {
-                var alert = document.querySelector('.success-alert');
-                if (alert) {
-                    alert.style.display = 'none';
+                var successAlert = document.querySelector('.success-alert');
+                if (successAlert) {
+                    successAlert.style.display = 'none';
                 }
             }, 2000);
+
+            setTimeout(function () {
+                var alertMessage = document.querySelector('.alert-message');
+                if (alertMessage) {
+                    alertMessage.style.display = 'none';
+                }
+            }, 5500);
         </script>
 
 

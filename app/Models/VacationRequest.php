@@ -13,9 +13,9 @@ class VacationRequest extends Model
         'user_id',
         'start_date',
         'days_requested',
-        'status',
-        'team_leader_approved', //TODO fix the html according to this 
+        'team_leader_approved',
         'project_manager_approved',
+        'status',
     ];
 
     public function user()

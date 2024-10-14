@@ -71,7 +71,15 @@
         }
 
         .success-alert {
-            position: absolute;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 300px;
+        }
+
+        .alert-message {
+            position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1050;
@@ -128,21 +136,36 @@
 
     <div class="container">
 
-        <h1>Your Vacation requests:</h1>
+        <h1>Your vacation requests:</h1>
+
         @if (session('success'))
             <div class="alert alert-success success-alert">
                 {{ session('success') }}
             </div>
         @endif
+
+        @if (session('alert'))
+            <div class="alert alert-danger alert-message">
+                {{ session('alert') }}
+            </div>
+        @endif
+
         <script>
+            setTimeout(function () {
+                var successAlert = document.querySelector('.success-alert');
+                if (successAlert) {
+                    successAlert.style.display = 'none';
+                }
+            }, 2000);
 
             setTimeout(function () {
-                var alert = document.querySelector('.success-alert');
-                if (alert) {
-                    alert.style.display = 'none';
+                var alertMessage = document.querySelector('.alert-message');
+                if (alertMessage) {
+                    alertMessage.style.display = 'none';
                 }
-            }, 2000); 
+            }, 5000);
         </script>
+
         <div class="container2 mt-4">
 
             @if ($vacationRequests->isEmpty())
@@ -158,8 +181,7 @@
                                     <p class="card-text">Project manager approval: {{ $request->project_manager_approved }}</p>
                                     <p class="card-text">Team leader approval: {{ $request->team_leader_approved }}</p>
                                     <p class="card-text"
-                                        style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
-                                                                                                       {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
+                                        style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
                                         {{ $request->status }}
                                     </p>
                                 </div>

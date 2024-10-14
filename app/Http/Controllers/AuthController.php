@@ -21,21 +21,21 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return redirect()->back()->withErrors(['error' => 'Neispravni podaci za prijavu']);
+            return redirect()->back()->withErrors(['error' => 'Wrong email or password!']);
         }
 
         Auth::login($user);
 
         switch ($user->role_id) {
             case 1:
-                return redirect()->route('admin.dashboard')->with('success', 'Uspješno ste prijavljeni!');
+                return redirect()->route('admin.dashboard')->with('success', 'Successfully logged in!');
                 ;
             case 2:
-                return redirect()->route('managers.dashboard');
+                return redirect()->route('managers.dashboard')->with('success', 'Successfully logged in!');
             case 3:
-                return redirect()->route('managers.dashboard');
+                return redirect()->route('managers.dashboard')->with('success',  'Successfully logged in!');
             case 4:
-                return redirect()->route('employee.dashboard')->with('success', 'Uspješno ste prijavljeni!');
+                return redirect()->route('employee.dashboard')->with('success', 'Successfully logged in!');
                 ;
             default:
                 return redirect()->route('home');
