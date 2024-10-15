@@ -33,3 +33,11 @@ Route::get('/request/{id}/details', [ManagerController::class, 'showRequestDetai
 Route::post('/request/{id}/approve', [ManagerController::class, 'approve'])->name('vacation.approve');
 
 Route::post('/request/{id}/reject', [ManagerController::class, 'reject'])->name('vacation.reject');
+
+Route::get('/user/{id}/details', [AdminController::class, 'showUserDetails'])->name('user.details');
+
+Route::post('/user/{id}', [AdminController::class, 'updateUser'])->name('user.update');
+
+Route::get('/admin/newUser', [AdminController::class, 'addNewUser'])->name('user.add');
+
+Route::post('/admin/saveUser', [AdminController::class, 'saveUser'])->name('user.save');

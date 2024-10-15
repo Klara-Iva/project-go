@@ -133,8 +133,8 @@
         }
 
         .header-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             align-items: center;
             background-color: rgba(0, 0, 0, 0.7);
             padding: 15px;
@@ -143,12 +143,27 @@
         }
 
         .header-row .header-text {
-            margin-left: 40px;
-            flex: 1;
             text-align: center;
-            padding-right: 0px;
+            padding: 10px;
             font-weight: bold;
             color: #fff;
+        }
+
+        .row-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            padding: 10px 15px;
+        }
+
+        .row-data .card-text {
+            text-align: center;
+            padding: 10px;
+            font-size: 1.1em;
+        }
+
+        .row-data .btn {
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -199,7 +214,6 @@
             }, 5500);
         </script>
 
-
         <div class="header-row">
             <div class="header-text">Name</div>
             <div class="header-text">Start Date</div>
@@ -215,22 +229,18 @@
                 <p>No vacation requests to show.</p>
             @else
                 @foreach ($vacationRequests as $request)
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="details">
-                                <p class="card-text">{{ $request->user->name }}</p>
-                                <p class="card-text">{{ $request->start_date }}</p>
-                                <p class="card-text">{{ $request->days_requested }} days</p>
-                                <p class="card-text">{{ $request->project_manager_approved }}</p>
-                                <p class="card-text">{{ $request->team_leader_approved }}</p>
-                                <p class="card-text"
-                                    style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
-                                                        {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
-                                    {{ $request->status }}
-                                </p>
-                            </div>
-                            <a href="{{ route('request.details', $request->id) }}" class="btn btn-primary">View Details</a>
-                        </div>
+                    <div class="row-data">
+                        <p class="card-text">{{ $request->user->name }}</p>
+                        <p class="card-text">{{ $request->start_date }}</p>
+                        <p class="card-text">{{ $request->days_requested }} days</p>
+                        <p class="card-text">{{ $request->project_manager_approved }}</p>
+                        <p class="card-text">{{ $request->team_leader_approved }}</p>
+                        <p class="card-text"
+                            style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
+                                    {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
+                            {{ $request->status }}
+                        </p>
+                        <a href="{{ route('request.details', $request->id) }}" class="btn btn-primary">View Details</a>
                     </div>
                 @endforeach
             @endif

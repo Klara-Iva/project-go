@@ -19,7 +19,6 @@
             align-items: center;
             font-family: Arial, sans-serif;
             color: #ffffff;
-
         }
 
         .container {
@@ -29,6 +28,7 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 100px;
             width: 100%;
+            max-width: 1400px;
             color: #ffffff;
         }
 
@@ -78,14 +78,40 @@
             width: 300px;
         }
 
+        .alert-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: 300px;
+        }
+
         .card {
             background-color: rgba(0, 0, 0, 0.5);
             color: #ffffff;
             border-radius: 21px;
+            margin-bottom: 20px;
+            width: 100%;
         }
 
-        .card p {
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .card-text {
             margin: 0;
+            padding-right: 10px;
+            flex: 1;
         }
 
         .btn-primary {
@@ -105,71 +131,127 @@
             top: 20px;
             left: 20px;
         }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 21px;
+            margin-bottom: 10px;
+        }
+
+        .header-row .header-text {
+            flex: 1;
+            text-align: center;
+            padding: 0;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .header-row .header-text:nth-child(1),
+        .header-row .header-text:nth-child(2),
+        .header-row .header-text:nth-child(3) {
+            width: 33.33%;
+            text-align: center;
+        }
+
+        .user-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 21px;
+            margin-bottom: 10px;
+        }
+
+        .user-row .user-text {
+            flex: 1;
+            text-align: center;
+            padding: 0;
+            color: #fff;
+        }
+
+        .user-row .user-text:nth-child(1),
+        .user-row .user-text:nth-child(2),
+        .user-row .user-text:nth-child(3) {
+            width: 33.33%;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="top-right-buttons">
+        <a href="{{ route('user.add') }}" class="btn btn-primary">Add user</a>
         <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
             @csrf
             <button type="submit" class="btn-logout">Logout</button>
         </form>
     </div>
 
-
     <div class="welcome-message">
         Welcome {{ $user->name }} ({{ $user->role->role_name }})
     </div>
 
-
     <div class="container">
 
-        <h1>Your Vacation requests:</h1>
+        <h1>All Users:</h1>
+
         @if (session('success'))
             <div class="alert alert-success success-alert">
                 {{ session('success') }}
             </div>
         @endif
+
+        @if (session('alert'))
+            <div class="alert alert-danger alert-message">
+                {{ session('alert') }}
+            </div>
+        @endif
+
         <script>
+            setTimeout(function () {
+                var successAlert = document.querySelector('.success-alert');
+                if (successAlert) {
+                    successAlert.style.display = 'none';
+                }
+            }, 2000);
 
             setTimeout(function () {
-                var alert = document.querySelector('.success-alert');
-                if (alert) {
-                    alert.style.display = 'none';
+                var alertMessage = document.querySelector('.alert-message');
+                if (alertMessage) {
+                    alertMessage.style.display = 'none';
                 }
-            }, 2000); 
+            }, 5500);
         </script>
-        <div class="container2 mt-4">
 
-            @if ($vacationRequests->isEmpty())
-                <p>No vacation requests to show.</p>
+        <div class="header-row">
+            <div class="header-text">Name</div>
+            <div class="header-text">Role</div>
+            <div class="header-text">Details</div>
+        </div>
+
+        <div class="container2 mt-4">
+            @if ($users->isEmpty())
+                <p>No users to show.</p>
             @else
-                <div class="row">
-                    @foreach ($vacationRequests as $request)
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">User: {{ $request->user->name }}</p>
-                                    <p class="card-text">Start date: {{ $request->start_date }}</p>
-                                    <p class="card-text">Duration: {{ $request->days_requested }} days</p>
-                                    <p class="card-text">Project manager approval: {{ $request->project_manager_approved }}</p>
-                                    <p class="card-text">Team leader approval: {{ $request->team_leader_approved }}</p>
-                                    <p class="card-text"
-                                        style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
-                                                                                                               {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
-                                        {{ $request->status }}
-                                    </p>
-                                </div>
-                            </div>
+                @foreach ($users as $user)
+                    <div class="user-row">
+                        <div class="user-text">{{ $user->name }}</div>
+                        <div class="user-text">{{ $user->role->role_name }}</div>
+                        <div class="user-text">
+                            <a href="{{ route('user.details', $user->id) }}" class="btn btn-primary">More Details</a>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
             @endif
         </div>
 
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

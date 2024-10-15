@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
+    //TODO add checks for each page so only authorised user can see the page
+    //current situation: user can view the page after logout if he goes a page back->cache problem? reload? add checks?
     public function login(Request $request)
     {
         $request->validate([

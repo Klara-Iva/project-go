@@ -14,7 +14,7 @@ class ManagerController extends Controller
         $userId = Auth::id();
         $user = Auth::User();
 
-        if (!$userId || !($user->role_id == 3 || $user->role_id == 2)) {
+        if (!$userId || !($user->role_id == 3 || $user->role_id == 2)) {  //TODO add a new role to both, so one can be like: ["Manager","TeamLead"]
             return redirect()->route('login');
         }
         $teamIds = $user->teams->pluck('id');
