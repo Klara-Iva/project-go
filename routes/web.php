@@ -3,6 +3,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,8 +37,8 @@ Route::post('/request/{id}/reject', [ManagerController::class, 'reject'])->name(
 
 Route::get('/user/{id}/details', [AdminController::class, 'showUserDetails'])->name('user.details');
 
-Route::post('/user/{id}', [AdminController::class, 'updateUser'])->name('user.update');
+Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.update');
 
-Route::get('/admin/newUser', [AdminController::class, 'addNewUser'])->name('user.add');
+Route::get('/admin/addNewUser', [AdminController::class, 'getAddNewUserView'])->name('user.add');
 
-Route::post('/admin/saveUser', [AdminController::class, 'saveUser'])->name('user.save');
+Route::post('/admin/saveUser', [UserController::class, 'saveUser'])->name('user.save');

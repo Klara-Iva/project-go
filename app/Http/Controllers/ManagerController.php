@@ -14,7 +14,9 @@ class ManagerController extends Controller
         $userId = Auth::id();
         $user = Auth::User();
 
-        if (!$userId || !($user->role_id == 3 || $user->role_id == 2)) {  //TODO add a new role to both, so one can be like: ["Manager","TeamLead"]
+        if (!$userId || !($user->role_id == 3 || $user->role_id == 2)) {  
+            //TODO add a new role to both, so one can be like: ["Manager","TeamLead"]
+            Auth::logout();
             return redirect()->route('login');
         }
         $teamIds = $user->teams->pluck('id');
@@ -30,10 +32,10 @@ class ManagerController extends Controller
     public function showRequestDetails($id)
     {
         $request = VacationRequest::with('user')->findOrFail($id);
-        return view('vacation-request-details', compact('request'));
+        return view('approve-vacation-request', compact('request'));
     }
 
-    public function approve(Request $request, $id)
+    public function approve(Request $request, $id)//TODO approve/reject can be one method-> refactor
     {
         $user = Auth::user();
         $vacationRequest = VacationRequest::findOrFail($id);
@@ -44,16 +46,14 @@ class ManagerController extends Controller
             $vacationRequest->project_manager_approved = 'approved';
         }
 
-        $vacationRequest->save();
-
         if ($vacationRequest->team_leader_approved == 'approved' && $vacationRequest->project_manager_approved == 'approved') {
             $vacationRequest->status = 'approved';
-            $vacationRequest->save();
             $requestingUser = $vacationRequest->user;
             $requestingUser->annual_leave_days =  $requestingUser->annual_leave_days-$vacationRequest->days_requested;
             $requestingUser->save();
         }
 
+        $vacationRequest->save();
         return redirect()->route('managers.dashboard')->with('success', 'Request has been approved.');
     }
 
@@ -68,13 +68,10 @@ class ManagerController extends Controller
             $vacationRequest->project_manager_approved = 'rejected';
         }
 
-        $vacationRequest->save();
-
         if ($vacationRequest->team_leader_approved == 'rejected' || $vacationRequest->project_manager_approved == 'rejected') {
             $vacationRequest->status = 'rejected';
-            $vacationRequest->save();
         }
-
+        $vacationRequest->save();
         return redirect()->route('managers.dashboard')->with('success', 'Request has been rejected.');
     }
 

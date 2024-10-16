@@ -78,11 +78,57 @@
 
         .text-danger {
             color: #ff4d4d;
+            font-size: 0.875em;
+            margin-top: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .back-btn {
+            background-color: #007bff;
+            border-color: #007bff;
+            top: 20px;
+            right: 140px;
+        }
+
+        .btn-logout {
+            background-color: #333;
+            top: 20px;
+            right: 20px;
+        }
+
+        .back-btn,
+        .btn-logout {
+            top: 20px;
+            position: absolute;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            width: 100px;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
         }
     </style>
 </head>
 
 <body>
+    <div class="top-right-buttons">
+        <a href="{{ route('admin.dashboard') }}" class="back-btn">Back</a>
+        <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
+            @csrf
+            <button type="submit" class="btn-logout">Logout</button>
+        </form>
+    </div>
 
     <div class="container">
         <h1>Add New User</h1>
@@ -98,15 +144,23 @@
                 {{ session('error') }}
             </div>
         @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form method="POST" action="{{ route('user.save') }}">
             @csrf
-
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
                 @error('name')
-                    <div class="text-danger">{{ $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -114,29 +168,27 @@
                 <label for="email">Email</label>
                 <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
                 @error('email')
-                    <div class="text-danger">{{ $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <input type="password" class="form-control" id="password" name="password" value="{{ old('password') }}"
+                    required>
                 @error('password')
-                    <div class="text-danger">{{ $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label for="role">Role</label>
-                <select class="form-control" id="role" name="role" required>
-                    <option value="4" {{ old('role') == 'user' ? 'selected' : '' }}>Employee</option>
-                    <option value="1" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="3" {{ old('role') == 'project_manager' ? 'selected' : '' }}>Project Manager</option>
-                    <option value="2" {{ old('role') == 'team_leader' ? 'selected' : '' }}>Team Leader</option>
+                <select class="form-control" id="role" name="role_id" required>
+                    <option value="4" {{ old('role_id') == 4 ? 'selected' : '' }}>Employee</option>
+                    <option value="1" {{ old('role_id') == 1 ? 'selected' : '' }}>Admin</option>
+                    <option value="3" {{ old('role_id') == 3 ? 'selected' : '' }}>Project Manager</option>
+                    <option value="2" {{ old('role_id') == 2 ? 'selected' : '' }}>Team Leader</option>
                 </select>
-                @error('role')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
             </div>
 
             <div class="form-group">
@@ -149,6 +201,9 @@
                         </div>
                     @endforeach
                 </div>
+                @error('team_ids')
+                    <div class="error">{{ $message }}</div>
+                @enderror
             </div>
             <button type="submit" class="btn btn-submit">Add User</button>
         </form>

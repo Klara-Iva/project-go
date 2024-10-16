@@ -13,11 +13,14 @@ class EmployeeController extends Controller
         $userId = Auth::id();
         $user = Auth::User();
         if (!$userId || $user->role_id != 4) {
+            Auth::logout();
             return redirect()->route('login');
         }
 
         $vacationRequests = VacationRequest::with('user')->where('user_id', $userId)->get();
         return view('employee.dashboard', compact('user', 'vacationRequests'));
     }
+
+    //TODO change password button and function
 
 }

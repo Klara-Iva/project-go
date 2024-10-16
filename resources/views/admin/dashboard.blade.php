@@ -53,6 +53,7 @@
 
         .top-right-buttons .btn {
             margin-left: 10px;
+            margin-right: 10px;
         }
 
         .btn-logout {

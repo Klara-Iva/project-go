@@ -86,11 +86,16 @@
             top: 20px;
             right: 20px;
         }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
 <body>
-
 
     <button class="back-btn" onclick="window.history.back();">Back</button>
     <form action="{{ route('logout') }}" method="POST" id="logout-form">
@@ -108,13 +113,20 @@
         <form method="POST" action="{{ route('submitVacationRequest') }}">
             @csrf
             <label for="start_date">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" required>
+            <input type="date" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
+            @error('start_date')
+                <div class="error">{{ $message }}</div>
+            @enderror
+
             <label for="days_off">Days Off:</label>
-            <input type="number" id="days_off" name="days_off" required min="1">
+            <input type="number" id="days_off" name="days_off" value="{{ old('days_off') }}" required min="1">
+            @error('days_off')
+                <div class="error">{{ $message }}</div>
+            @enderror
+
             <button type="submit" class="send-btn">Send Request</button>
         </form>
     </div>
-
 
 </body>
 
