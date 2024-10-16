@@ -53,13 +53,14 @@
 
         .top-right-buttons .btn {
             margin-left: 10px;
+            margin-right: 10px;
         }
 
         .btn-logout {
             background-color: #dc3545;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 7px 20px;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
@@ -121,6 +122,7 @@
 <body>
 
     <div class="top-right-buttons">
+        <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-secondary">Reset Password</a>
         <a href="{{ route('vacation.request.view') }}" class="btn btn-primary">New vacation Request</a>
         <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
             @csrf

@@ -42,3 +42,7 @@ Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.upd
 Route::get('/admin/addNewUser', [AdminController::class, 'getAddNewUserView'])->name('user.add');
 
 Route::post('/admin/saveUser', [UserController::class, 'saveUser'])->name('user.save');
+
+Route::get('/reset-password', [UserController::class, 'showResetPasswordForm'])->name('user.showResetPasswordForm');
+
+Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('user.resetPassword');

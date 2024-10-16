@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Hash;
 use Illuminate\Support\Facades\Validator;
+use Auth;
 
 class UserController extends Controller
 {
@@ -97,6 +98,32 @@ class UserController extends Controller
         }
 
         return redirect()->route('admin.dashboard')->with('success', 'User added successfully!');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'new_password' => 'required|min:8|confirmed',
+        ], [
+            'new_password.required' => 'New password must have a value.',
+            'new_password.min' => 'Password must be at least 8 characters.',
+            'new_password.confirmed' => 'Passwords do not match.',
+        ]);
+
+        $user = Auth::user();
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+        if ($user->role_id == 2 || $user->role_id == 3) { //TODO this could be refactored in a new class, multiple usage in project
+            return redirect()->route('managers.dashboard')->with('success', 'Password has been successfully updated!');
+        } else {
+            return redirect()->route('employee.dashboard')->with('success', 'Password has been successfully updated!');
+        }
+
+    }
+
+    public function showResetPasswordForm()
+    {
+        return view('reset-password');
     }
 
 }
