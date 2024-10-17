@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
+    <title>Manager Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -19,7 +19,6 @@
             align-items: center;
             font-family: Arial, sans-serif;
             color: #ffffff;
-
         }
 
         .container {
@@ -29,6 +28,7 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 100px;
             width: 100%;
+            max-width: 1400px;
             color: #ffffff;
         }
 
@@ -53,14 +53,13 @@
 
         .top-right-buttons .btn {
             margin-left: 10px;
-            margin-right: 10px;
         }
 
         .btn-logout {
             background-color: #dc3545;
             color: white;
             border: none;
-            padding: 7px 20px;
+            padding: 10px 20px;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
@@ -72,7 +71,7 @@
         }
 
         .success-alert {
-            position: fixed;
+            position: absolute;
             top: 20px;
             right: 20px;
             z-index: 1050;
@@ -91,10 +90,28 @@
             background-color: rgba(0, 0, 0, 0.5);
             color: #ffffff;
             border-radius: 21px;
+            margin-bottom: 20px;
+            width: 100%;
         }
 
-        .card p {
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .card-text {
             margin: 0;
+            padding-right: 10px;
+            flex: 1;
         }
 
         .btn-primary {
@@ -115,6 +132,40 @@
             left: 20px;
         }
 
+        .header-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 21px;
+            margin-bottom: 10px;
+        }
+
+        .header-row .header-text {
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .row-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            align-items: center;
+            padding: 10px 15px;
+        }
+
+        .row-data .card-text {
+            text-align: center;
+            padding: 10px;
+            font-size: 1.1em;
+        }
+
+        .row-data .btn {
+            margin-left: 10px;
+        }
+
         .vacation-days-message {
             text-align: center;
             font-size: 1.2em;
@@ -126,7 +177,9 @@
 </head>
 
 <body>
+
     <div class="top-right-buttons">
+
         <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-secondary">Reset Password</a>
         <a href="{{ route('vacation.request.view') }}" class="btn btn-primary">New vacation Request</a>
         <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
@@ -134,15 +187,17 @@
             <button type="submit" class="btn-logout">Logout</button>
         </form>
     </div>
+
     <div class="welcome-message">
-        Welcome, {{ $user->name }} ({{ $user->role->role_name }})
+        Welcome {{ $user->name }} ({{ $user->role->role_name }})
     </div>
     <div class="vacation-days-message">
         Unused vacation days: {{$user->annual_leave_days}}
     </div>
 
     <div class="container">
-        <h1>Your vacation requests:</h1>
+
+        <h1>Your teams Vacation requests:</h1>
 
         @if (session('success'))
             <div class="alert alert-success success-alert">
@@ -169,40 +224,46 @@
                 if (alertMessage) {
                     alertMessage.style.display = 'none';
                 }
-            }, 5000);
+            }, 5500);
         </script>
 
-        <div class="container2 mt-4">
+        <div class="header-row">
+            <div class="header-text">Name</div>
+            <div class="header-text">Start Date</div>
+            <div class="header-text">Duration</div>
+            <div class="header-text">Project Manager Approval</div>
+            <div class="header-text">Team Leader Approval</div>
+            <div class="header-text">Status</div>
+            <div class="header-text">Buttons</div>
+        </div>
 
+        <div class="container2 mt-4">
             @if ($vacationRequests->isEmpty())
                 <p>No vacation requests to show.</p>
             @else
-                <div class="row">
-                    @foreach ($vacationRequests as $request)
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Start date: {{ $request->start_date }}</p>
-                                    <p class="card-text">Duration: {{ $request->days_requested }} days</p>
-                                    <p class="card-text">Project manager approval: {{ $request->project_manager_approved }}</p>
-                                    <p class="card-text">Team leader approval: {{ $request->team_leader_approved }}</p>
-                                    <p class="card-text"
-                                        style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
-                                        {{ $request->status }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                @foreach ($vacationRequests as $request)
+                    <div class="row-data">
+                        <p class="card-text">{{ $request->user->name }}</p>
+                        <p class="card-text">{{ $request->start_date }}</p>
+                        <p class="card-text">{{ $request->days_requested }} days</p>
+                        <p class="card-text">{{ $request->project_manager_approved }}</p>
+                        <p class="card-text">{{ $request->team_leader_approved }}</p>
+                        <p class="card-text"
+                            style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
+                                                    {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
+                            {{ $request->status }}
+                        </p>
+                        <a href="{{ route('request.details', $request->id) }}" class="btn btn-primary">View Details</a>
+                    </div>
+                @endforeach
             @endif
         </div>
 
     </div>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 
 </html>

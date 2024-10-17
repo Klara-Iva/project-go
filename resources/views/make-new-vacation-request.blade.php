@@ -106,7 +106,7 @@
     <div class="container">
         <h2>New Vacation Request</h2>
         <div>
-            Number of days you have: {{ $user->annual_leave_days }}
+            Number of days you can request: {{ $remainingVacationDays }}
         </div>
 
 

@@ -43,4 +43,9 @@ class User extends Authenticatable
         return $this->hasMany(Project::class);
     }
 
+    public function vacationRequests()
+    {
+        return $this->hasMany(VacationRequest::class, 'user_id');
+    }
+
 }

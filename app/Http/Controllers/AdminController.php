@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
+    //TODO add check where two admins atleast exist, and they cant change their own info
     public function dashboard()
     {
         $userId = Auth::id();
@@ -21,7 +22,7 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('user', 'users'));
     }
 
-    public function showUserDetails($id)//TODO everything related to user, move to npr. UserController
+    public function showUserDetails($id)
     {
         $user = User::findOrFail($id);
         $teams = Team::all();

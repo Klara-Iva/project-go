@@ -35,6 +35,10 @@ Route::post('/request/{id}/approve', [ManagerController::class, 'approve'])->nam
 
 Route::post('/request/{id}/reject', [ManagerController::class, 'reject'])->name('vacation.reject');
 
+Route::get('/user/{id}/requests', [UserController::class, 'showRequests'])->name('user.requests');
+
+Route::get('/managers/allrequests', [ManagerController::class, 'viewallrequests'])->name('allrequests');
+
 Route::get('/user/{id}/details', [AdminController::class, 'showUserDetails'])->name('user.details');
 
 Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.update');

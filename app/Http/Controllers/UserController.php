@@ -58,7 +58,7 @@ class UserController extends Controller
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',//Could add number etc... 
+            'password' => 'required|min:8',//Must add number etc... 
             'role_id' => 'required|integer|exists:roles,id',
             'team_ids' => 'nullable|array',
             'team_ids.*' => 'integer|exists:teams,id',
@@ -124,6 +124,13 @@ class UserController extends Controller
     public function showResetPasswordForm()
     {
         return view('reset-password');
+    }
+
+    public function showRequests($id)
+    {
+        $user = User::findOrFail($id);
+        $vacationRequests = $user->vacationRequests()->get();
+        return view('user-requests', compact('user', 'vacationRequests'));
     }
 
 }
