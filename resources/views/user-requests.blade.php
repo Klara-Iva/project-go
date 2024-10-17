@@ -8,9 +8,13 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
             font-family: Arial, sans-serif;
             color: #333;
+            background-image: url('/images/background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
         .container {
@@ -47,13 +51,17 @@
         .btn-back {
             margin-bottom: 20px;
         }
+
+        .h1 {
+            color
+        }
     </style>
 </head>
 
 <body>
 
     <div class="container">
-        <h1 class="header">{{ $user->name }}'s Vacation Requests</h1>
+        <h1 class="header" style="color: white;">{{ $user->name }}'s Vacation Requests</h1>
 
         <a href="{{ route('managers.dashboard') }}" class="btn btn-secondary btn-back">Back to Dashboard</a>
 
