@@ -56,7 +56,7 @@
 <body>
     <script>
         if (window.performance && window.performance.navigation.type === 2) {
-            window.location.reload(true);  // Reload with fresh data
+            window.location.reload(true);
         }
 
     </script>

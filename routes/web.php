@@ -29,13 +29,14 @@ Route::middleware(EnsureUserHasRole::class . ':All')->group(function () {
 
 Route::middleware(EnsureUserHasRole::class . ':Employee')->group(function () {
     Route::get('/employee/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
+    Route::get('/employee/request/{id}', [VacationRequestController::class, 'showRequestDetails'])->name('employee.requestDetails');
+
 });
 
 Route::middleware(EnsureUserHasRole::class . ':Managers')->group(function () {
     Route::get('/managers/dashboard', [ManagerController::class, 'dashboard'])->name('managers.dashboard');
     Route::get('/request/{id}/details', [ManagerController::class, 'showRequestDetails'])->name('request.details');
-    Route::post('/request/{id}/approve', [ManagerController::class, 'handleApproval'])->name('vacation.approve')->defaults('action', 'approved');
-    Route::post('/request/{id}/reject', [ManagerController::class, 'handleApproval'])->name('vacation.reject')->defaults('action', 'rejected');
+    Route::post('/request/{id}/approve', [ManagerController::class, 'handleApproval'])->name('vacation.approval');
     Route::get('/user/{id}/requests', [UserController::class, 'showRequests'])->name('user.requests');
     Route::get('/managers/allrequests', [ManagerController::class, 'viewAllRequests'])->name('allrequests');
 

@@ -17,7 +17,8 @@ class CreateVacationRequestsTable extends Migration
             $table->enum('team_leader_approved', ['pending', 'approved', 'rejected'])->default('pending');
             $table->enum('project_manager_approved', ['pending', 'approved', 'rejected'])->default('pending');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->string('comment')->nullable();
+            $table->text('team_leader_comment')->nullable();
+            $table->text('project_manager_comment')->nullable();
             $table->timestamps();
         });
     }

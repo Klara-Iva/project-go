@@ -38,7 +38,7 @@ class VacationRequestController extends Controller
     {
         $user = Auth::user();
         $remainingVacationDays = $this->remainingVacationDays;
-        
+
         return view('make-new-vacation-request', compact('user', 'remainingVacationDays'));
     }
 
@@ -112,6 +112,12 @@ class VacationRequestController extends Controller
             return redirect()->route('employee.dashboard');
         }
 
+    }
+
+    public function showRequestDetails($id)
+    {
+        $vacationRequest = VacationRequest::find($id);
+        return view('employee.vacation-request-details', compact('vacationRequest'));
     }
 
 }

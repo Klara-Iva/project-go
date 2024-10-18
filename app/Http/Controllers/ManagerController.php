@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\VacationRequest;
-use Request;
+use Illuminate\Http\Request;
 
 class ManagerController extends Controller
 {
@@ -31,19 +31,26 @@ class ManagerController extends Controller
     public function showRequestDetails($id)
     {
         $request = VacationRequest::with('user')->findOrFail($id);
-        
-        return view('approve-vacation-request', compact('request'));
+
+        return view('managers.approve-vacation-request', compact('request'));
     }
 
-    public function handleApproval(Request $request, $id, $action)
+    public function handleApproval(Request $request, $id)
     {
         $user = Auth::user();
         $vacationRequest = VacationRequest::findOrFail($id);
 
+        $comment = $request->input('comment', null);
         if ($user->role_id == 2) {
-            $vacationRequest->team_leader_approved = $action;
+            if ($comment) {
+                $vacationRequest->team_leader_comment = $comment;
+            }
+            $vacationRequest->team_leader_approved = $request->input('action');
         } elseif ($user->role_id == 3) {
-            $vacationRequest->project_manager_approved = $action;
+            if ($comment) {
+                $vacationRequest->project_manager_comment = $comment;
+            }
+            $vacationRequest->project_manager_approved = $request->input('action');
         }
 
         if ($vacationRequest->team_leader_approved == 'approved' && $vacationRequest->project_manager_approved == 'approved') {
@@ -58,8 +65,7 @@ class ManagerController extends Controller
         }
 
         $vacationRequest->save();
-        $message = $action == 'approved' ? 'Request has been approved.' : 'Request has been rejected.';
-
+        $message = $request->input('action') == 'approved' ? 'Request has been approved.' : 'Request has been rejected.';
         return redirect()->route('managers.dashboard')->with('success', $message);
     }
 
@@ -73,7 +79,7 @@ class ManagerController extends Controller
         })->pluck('id');
 
         $vacationRequests = VacationRequest::whereIn('user_id', $teamUsers)->with('user')->get();
-       
+
         return view('managers.all-team-requests', compact('user', 'vacationRequests'));
     }
 

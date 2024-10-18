@@ -134,7 +134,7 @@
 
         .header-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             align-items: center;
             background-color: rgba(0, 0, 0, 0.7);
             padding: 15px;
@@ -151,7 +151,7 @@
 
         .row-data {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
             align-items: center;
             padding: 10px 15px;
         }
@@ -230,6 +230,7 @@
         <div class="header-row">
             <div class="header-text">Name</div>
             <div class="header-text">Start Date</div>
+            <div class="header-text">End Date</div>
             <div class="header-text">Duration</div>
             <div class="header-text">Project Manager Approval</div>
             <div class="header-text">Team Leader Approval</div>
@@ -245,12 +246,13 @@
                     <div class="row-data">
                         <p class="card-text">{{ $request->user->name }}</p>
                         <p class="card-text">{{ $request->start_date }}</p>
+                        <p class="card-text">{{ $request->end_date }}</p>
                         <p class="card-text">{{ $request->days_requested }} days</p>
                         <p class="card-text">{{ $request->project_manager_approved }}</p>
                         <p class="card-text">{{ $request->team_leader_approved }}</p>
                         <p class="card-text"
                             style="text-transform: uppercase; font-size: 1.5em; font-weight: bold; color: 
-                                                    {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
+                                                            {{ $request->status === 'approved' ? 'green' : ($request->status === 'rejected' ? 'red' : 'white') }};">
                             {{ $request->status }}
                         </p>
                         <a href="{{ route('request.details', $request->id) }}" class="btn btn-primary">View Details</a>

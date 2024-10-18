@@ -74,6 +74,7 @@
                         <div class="card-body">
                             <div class="details">
                                 <p class="card-text"><strong>Start Date:</strong> {{ $request->start_date }}</p>
+                                <p class="card-text"><strong>End Date:</strong> {{ $request->end_date }}</p>
                                 <p class="card-text"><strong>Days Requested:</strong> {{ $request->days_requested }} days</p>
                                 <p class="card-text"><strong>Status:</strong>
                                     <span

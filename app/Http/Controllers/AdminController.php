@@ -22,7 +22,7 @@ class AdminController extends Controller
         $teams = Team::all();
         $userTeams = $user->teams->pluck('id')->toArray();
 
-        return view('user-details', compact('user', 'teams', 'userTeams'));
+        return view('admin.user-details', compact('user', 'teams', 'userTeams'));
     }
 
     public function getAddNewUserView()

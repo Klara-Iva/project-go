@@ -28,7 +28,7 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 100px;
             width: 100%;
-            max-width: 1400px;
+            max-width: 900px;
             color: #ffffff;
         }
 

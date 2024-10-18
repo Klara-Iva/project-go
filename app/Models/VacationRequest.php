@@ -14,7 +14,8 @@ class VacationRequest extends Model
         'team_leader_approved',
         'project_manager_approved',
         'status',
-        'comment',
+        'team_leader_comment',
+        'project_manager_comment'
     ];
 
     public function user()

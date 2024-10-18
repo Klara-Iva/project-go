@@ -13,7 +13,8 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            margin: 0;
+            margin-top: 50px;
+            margin-bottom: 150px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,7 +29,7 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 100px;
             width: 100%;
-            max-width: 1400px;
+            max-width: 900px;
             color: #ffffff;
         }
 
@@ -134,7 +135,7 @@
 
         .header-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             align-items: center;
             background-color: rgba(0, 0, 0, 0.7);
             padding: 15px;
@@ -151,7 +152,7 @@
 
         .row-data {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             align-items: center;
             padding: 10px 15px;
         }
@@ -172,6 +173,13 @@
             position: absolute;
             top: 50px;
             left: 20px;
+        }
+
+        .btn-view {
+            background-color: #007bff;
+            border-color: #007bff;
+            width: 70%;
+            color: white;
         }
     </style>
 </head>
@@ -236,7 +244,7 @@
                 <div class="row-data">
                     <p class="card-text">{{ $teamUser->name }}</p>
                     <p class="card-text">{{ optional($teamUser->role)->role_name }}</p>
-                    <a href="{{ route('user.requests', $teamUser->id) }}" class="btn btn-primary">View Requests</a>
+                    <a href="{{ route('user.requests', $teamUser->id) }}" class="btn btn-view">View Requests</a>
                 </div>
             @endforeach
 
