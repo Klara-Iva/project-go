@@ -5,13 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    //TODO add checks for each page so only authorised user can see the page
-    //current situation: user can view the page after logout if he goes a page back->cache problem? reload? add checks?
     public function login(Request $request)
     {
         $request->validate([
@@ -30,16 +27,14 @@ class AuthController extends Controller
         switch ($user->role_id) {
             case 1:
                 return redirect()->route('admin.dashboard')->with('success', 'Successfully logged in!');
-                ;
             case 2:
                 return redirect()->route('managers.dashboard')->with('success', 'Successfully logged in!');
             case 3:
-                return redirect()->route('managers.dashboard')->with('success',  'Successfully logged in!');
+                return redirect()->route('managers.dashboard')->with('success', 'Successfully logged in!');
             case 4:
                 return redirect()->route('employee.dashboard')->with('success', 'Successfully logged in!');
-                ;
             default:
-                return redirect()->route('home');
+                return redirect()->route('login');
         }
     }
 

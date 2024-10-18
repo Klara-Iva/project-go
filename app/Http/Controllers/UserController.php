@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -58,7 +58,7 @@ class UserController extends Controller
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',//Must add number etc... 
+            'password' => 'required|min:8',
             'role_id' => 'required|integer|exists:roles,id',
             'team_ids' => 'nullable|array',
             'team_ids.*' => 'integer|exists:teams,id',
@@ -113,7 +113,7 @@ class UserController extends Controller
         $user = Auth::user();
         $user->password = Hash::make($request->new_password);
         $user->save();
-        if ($user->role_id == 2 || $user->role_id == 3) { //TODO this could be refactored in a new class, multiple usage in project
+        if ($user->role_id == 2 || $user->role_id == 3) {
             return redirect()->route('managers.dashboard')->with('success', 'Password has been successfully updated!');
         } else {
             return redirect()->route('employee.dashboard')->with('success', 'Password has been successfully updated!');

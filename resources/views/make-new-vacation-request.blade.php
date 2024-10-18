@@ -92,10 +92,34 @@
             font-size: 14px;
             margin-top: 5px;
         }
+
+        .error-message {
+            position: fixed;
+            top: 20px;
+            z-index: 1050;
+            padding: 15px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
     </style>
 </head>
 
 <body>
+
+    @if ($errors->has('error'))
+        <div id="error-popup" class="error-message">
+            {{ $errors->first('error') }}
+        </div>
+    @endif
+
 
     <button class="back-btn" onclick="window.history.back();">Back</button>
     <form action="{{ route('logout') }}" method="POST" id="logout-form">
@@ -118,6 +142,12 @@
                 <div class="error">{{ $message }}</div>
             @enderror
 
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
+            @error('end_date')
+                <div class="error">{{ $message }}</div>
+            @enderror
+
             <label for="days_off">Days Off:</label>
             <input type="number" id="days_off" name="days_off" value="{{ old('days_off') }}" required min="1">
             @error('days_off')
@@ -127,6 +157,19 @@
             <button type="submit" class="send-btn">Send Request</button>
         </form>
     </div>
+
+
+    <script>
+        const errorPopup = document.getElementById('error-popup');
+        if (errorPopup) {
+            setTimeout(() => {
+                errorPopup.classList.add('fade-out');
+            }, 5000);
+            setTimeout(() => {
+                errorPopup.style.display = 'none';
+            }, 6000);
+        }
+    </script>
 
 </body>
 

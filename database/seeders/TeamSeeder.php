@@ -19,6 +19,16 @@ class TeamSeeder extends Seeder
                 'name' => 'The best team ever',
                 'created_at' => now(),
                 'updated_at' => now()
+            ],
+            [
+                'name' => 'The middle team',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'name' => 'The nobody knows this team',
+                'created_at' => now(),
+                'updated_at' => now()
             ]
         ]);
     }

@@ -20,7 +20,7 @@ Route::get('/login', function () {
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(EnsureUserHasRole::class . ':all')->group(function () {
+Route::middleware(EnsureUserHasRole::class . ':All')->group(function () {
     Route::post('/vacation/request', [VacationRequestController::class, 'sendRequest'])->name('submitVacationRequest');
     Route::get('/vacation/request', [VacationRequestController::class, 'createRequestForm'])->name('vacation.request.view');
     Route::get('/reset-password', [UserController::class, 'showResetPasswordForm'])->name('user.showResetPasswordForm');
@@ -31,13 +31,13 @@ Route::middleware(EnsureUserHasRole::class . ':Employee')->group(function () {
     Route::get('/employee/dashboard', [EmployeeController::class, 'dashboard'])->name('employee.dashboard');
 });
 
-Route::middleware(EnsureUserHasRole::class . ':managers')->group(function () {
+Route::middleware(EnsureUserHasRole::class . ':Managers')->group(function () {
     Route::get('/managers/dashboard', [ManagerController::class, 'dashboard'])->name('managers.dashboard');
     Route::get('/request/{id}/details', [ManagerController::class, 'showRequestDetails'])->name('request.details');
-    Route::post('/request/{id}/approve', [ManagerController::class, 'approve'])->name('vacation.approve');
-    Route::post('/request/{id}/reject', [ManagerController::class, 'reject'])->name('vacation.reject');
+    Route::post('/request/{id}/approve', [ManagerController::class, 'handleApproval'])->name('vacation.approve')->defaults('action', 'approved');
+    Route::post('/request/{id}/reject', [ManagerController::class, 'handleApproval'])->name('vacation.reject')->defaults('action', 'rejected');
     Route::get('/user/{id}/requests', [UserController::class, 'showRequests'])->name('user.requests');
-    Route::get('/managers/allrequests', [ManagerController::class, 'viewallrequests'])->name('allrequests');
+    Route::get('/managers/allrequests', [ManagerController::class, 'viewAllRequests'])->name('allrequests');
 
 });
 
