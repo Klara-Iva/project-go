@@ -6,56 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $user->name }}'s Vacation Requests</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            color: #333;
-            background-image: url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .header {
-            margin-bottom: 20px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-        }
-
-        .card-body {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .details {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            gap: 20px;
-        }
-
-        .card-text {
-            margin: 0;
-            padding-right: 10px;
-            flex: 1;
-        }
-
-        .btn-back {
-            margin-bottom: 20px;
-        }
-
-        .h1 {
-            color
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/user-requests.css') }}">
 </head>
 
 <body>

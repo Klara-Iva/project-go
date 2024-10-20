@@ -1,0 +1,166 @@
+body {
+    background-image: url('/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+}
+
+.container {
+    background-color: rgba(35, 35, 35, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
+    width: 100%;
+    max-width: 1400px;
+    color: #ffffff;
+}
+
+h1 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.7em;
+}
+
+p {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+.top-right-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.top-right-buttons .btn {
+    margin-left: 10px;
+}
+
+.btn-logout {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
+
+.success-alert {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    width: 300px;
+}
+
+.alert-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    width: 300px;
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    border-radius: 21px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+}
+
+.card-text {
+    margin: 0;
+    padding-right: 10px;
+    flex: 1;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.welcome-message {
+    text-align: center;
+    font-size: 1.5em;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.header-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 21px;
+    margin-bottom: 10px;
+}
+
+.header-row .header-text {
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.row-data {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: center;
+    padding: 10px 15px;
+}
+
+.row-data .card-text {
+    text-align: center;
+    padding: 10px;
+    font-size: 1.1em;
+}
+
+.row-data .btn {
+    margin-left: 10px;
+}
+
+.vacation-days-message {
+    text-align: center;
+    font-size: 1.2em;
+    position: absolute;
+    top: 50px;
+    left: 20px;
+}

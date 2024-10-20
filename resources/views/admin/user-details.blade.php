@@ -6,51 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <style>
-        body {
-            background-image: url('/images/background.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-family: Arial, sans-serif;
-            color: #ffffff;
-        }
-
-        .container {
-            background-color: rgba(35, 35, 35, 0.7);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 50px;
-            max-width: 800px;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-
-        .radio-label,
-        .checkbox-label {
-            font-weight: bold;
-        }
-
-        .form-check-label {
-            margin-right: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/user-details.css') }}">
 </head>
 
 <body>
