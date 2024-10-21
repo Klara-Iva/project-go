@@ -9,6 +9,13 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+
+    protected $listen = [
+        'App\Events\VacationRequestSubmitted' => [
+            'App\Listeners\SendVacationRequestEmail',
+        ],
+    ];
+
     public function register(): void
     {
         //

@@ -6,6 +6,8 @@ use App\Models\VacationRequest;
 use Illuminate\Http\Request;
 use Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Events\VacationRequestSubmitted;
+
 
 class VacationRequestController extends Controller
 {
@@ -102,6 +104,8 @@ class VacationRequestController extends Controller
         if ($user->role_id == 3) {
             $vacationRequest->project_manager_approved = 'approved';
         }
+
+        event(new VacationRequestSubmitted($user));
 
         $vacationRequest->save();
         session()->flash('success', 'Vacation request successfully submitted.');
