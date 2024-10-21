@@ -17,8 +17,14 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
+
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::get('/registered-user', [AuthController::class, 'registeredUser'])->name('registered-user');
 
 Route::middleware(EnsureUserHasRole::class . ':All')->group(function () {
     Route::post('/vacation/request', [VacationRequestController::class, 'sendRequest'])->name('submitVacationRequest');
@@ -48,4 +54,5 @@ Route::middleware(EnsureUserHasRole::class . ':Admin')->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/admin/saveUser', [UserController::class, 'saveUser'])->name('user.save');
     Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
 });

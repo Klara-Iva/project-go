@@ -25,7 +25,11 @@ class RoleSeeder extends Seeder
             [
                 'id' => 4,
                 'role_name' => 'Employee',
-            ]
+            ],
+            [
+                'id' => 5,
+                'role_name' => 'Without role',
+            ],
         ]);
     }
 }

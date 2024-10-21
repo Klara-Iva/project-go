@@ -76,6 +76,7 @@
                     <option value="1" {{ old('role_id') == 1 ? 'selected' : '' }}>Admin</option>
                     <option value="3" {{ old('role_id') == 3 ? 'selected' : '' }}>Project Manager</option>
                     <option value="2" {{ old('role_id') == 2 ? 'selected' : '' }}>Team Leader</option>
+                    <option value="5" {{ old('role_id') == 5 ? 'selected' : '' }}>Without role</option>
                 </select>
             </div>
 

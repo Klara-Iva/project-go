@@ -133,4 +133,14 @@ class UserController extends Controller
         return view('user-requests', compact('user', 'vacationRequests'));
     }
 
+    public function destroy(User $user)
+    {
+        if (auth()->user()->id === $user->id) {
+            return redirect()->back()->with('error', 'Admins cannot delete themselves.');
+        }
+
+        $user->delete();
+        return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.');
+    }
+    
 }

@@ -40,3 +40,15 @@ h1 {
 .form-check-label {
     margin-right: 10px;
 }
+
+.text-danger {
+    color: #ff4d4d;
+    font-size: 0.875em;
+    margin-top: 5px;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+}
