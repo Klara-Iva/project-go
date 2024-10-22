@@ -12,7 +12,7 @@
 <body>
     <div class="top-right-buttons">
         <a href="{{ route('allrequests') }}" class="btn btn-primary">View all requests</a>
-        <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-secondary">Reset Password</a>
+        <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-primary">Reset Password</a>
         <a href="{{ route('vacation.request.view') }}" class="btn btn-primary">New vacation Request</a>
         <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
             @csrf
@@ -55,8 +55,74 @@
         }, 5500);
     </script>
 
+    <div class="search-container" style="margin-top: 120px; margin-left:150px;">
+      
+      <div class="search-form">
+           <h1>Search Users</h1> 
+      <form action="{{ route('managers.dashboard') }}" method="GET" >
+          <input type="text" name="search_term" placeholder="Search..." value="{{ request('search_term') }}">
+          <label><input type="checkbox" name="search_columns[]" value="name" {{ in_array('name', request('search_columns', [])) ? 'checked' : '' }}> Name</label>
+          <label><input type="checkbox" name="search_columns[]" value="email" {{ in_array('email', request('search_columns', [])) ? 'checked' : '' }}> Email</label>
+          <button class="button-search" type="submit">Search</button>
+      </form></div>
+  </div>
+
     <div class="container">
         <h1>Team Members</h1>
+
+        <div class="header-row">
+
+        <div class="header-text">
+                    <a
+                        href="{{ request()->fullUrlWithQuery(['sort_by' => 'name', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                        Name
+                        @if ($sortBy == 'name')
+                            @if ($sortOrder == 'asc')
+                                &#9650;
+                            @else
+                                &#9660;
+                            @endif
+                        @endif
+                    </a>
+                </div>
+                <div class="header-text">
+                    <a
+                        href="{{ request()->fullUrlWithQuery(['sort_by' => 'role', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                        Role
+                        @if ($sortBy == 'role')
+                            @if ($sortOrder == 'asc')
+                                &#9650;
+                            @else
+                                &#9660;
+                            @endif
+                        @endif
+                    </a>
+                </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="perPageSelect">Prikaži po stranici:</label>
+            <select id="perPageSelect" class="form-control" onchange="changePerPage()">
+                <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+            </select>
+        </div>
+
+        <script>
+            function changePerPage() {
+                var perPage = document.getElementById('perPageSelect').value;
+                var url = new URL(window.location.href);
+                url.searchParams.set('per_page', perPage);
+                window.location.href = url.toString();
+            }
+        </script>
+
+        <div class="pagination-container">
+            {{ $teamUsers->appends(request()->input())->links() }}
+        </div>
+
 
         <div class="header-row">
             <div class="header-text">Name</div>

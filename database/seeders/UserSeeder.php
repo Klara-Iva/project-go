@@ -79,17 +79,15 @@ class UserSeeder extends Seeder
         $faker = Faker::create();
         $teamIds = Team::pluck('id')->toArray();
 
-        for ($i = 0; $i < 100; $i++) {
+        $roles = array_merge(
+            array_fill(0, 75, 4),
+            array_fill(0, 5, 2),
+            array_fill(0, 5, 3),
+            array_fill(0, 15, 5)
+        );
 
-            //TODO make this simpler with if (randomChance > 80 && randomChange < 86)
-            $randomChance = $faker->numberBetween(1, 100);
-            if ($randomChance <= 80) {
-                $role_id = 4;
-            } elseif ($randomChance <= 85) {
-                $role_id = $faker->numberBetween(2, 3);
-            } else {
-                $role_id = 5;
-            }
+        for ($i = 0; $i < 100; $i++) {
+            $role_id = $faker->randomElement($roles);
 
             $user = User::create([
                 'name' => $faker->name,

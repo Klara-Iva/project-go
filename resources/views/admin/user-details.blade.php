@@ -10,6 +10,8 @@
 </head>
 
 <body>
+<a href="{{ route('admin.dashboard') }}" class="btn-back">Back</a>
+     
     <script>
         if (window.performance && window.performance.navigation.type === 2) {
             window.location.reload(true);
@@ -29,7 +31,7 @@
                 {{ session('error') }}
             </div>
         @endif
-
+    
         <form action="{{ route('user.update', $user->id) }}" method="POST">
             @csrf
 

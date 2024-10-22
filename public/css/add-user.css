@@ -29,13 +29,13 @@ h1 {
 }
 
 .btn-submit {
-    background-color: #007bff;
+    background-color: #a83273;
     color: white;
     width: 100%;
 }
 
 .btn-submit:hover {
-    background-color: #0056b3;
+    background-color: #731a54;
 }
 
 .alert {
@@ -59,8 +59,10 @@ label {
 
 .form-control:focus {
     background-color: #666;
-    border-color: #007bff;
+    border-color: #731a54;
     color: #ffffff;
+    box-shadow: 0 4px 10px #731a5480;
+  
 }
 
 .form-check-label {
@@ -80,14 +82,14 @@ label {
 }
 
 .back-btn {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #a83273;
+    border-color: #a83273;
     top: 20px;
     right: 140px;
 }
 
 .btn-logout {
-    background-color: #333;
+    background-color: #a83273;
     top: 20px;
     right: 20px;
 }
@@ -106,6 +108,6 @@ label {
 }
 
 .back-btn:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    background-color: #731a54;
+    border-color: #731a54;
 }
