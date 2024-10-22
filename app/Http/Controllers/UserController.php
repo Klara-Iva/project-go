@@ -142,5 +142,48 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.');
     }
-    
+
+    public function allUsers()
+    {
+        $users = User::with(['teams', 'role'])->get();
+        return view('all-users', compact('users'));
+    }
+
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('search_term');
+        $searchColumns = $request->input('search_columns', []);
+        $query = User::with(['role', 'teams', 'vacationRequests']);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm, $searchColumns) {
+                if (in_array('name', $searchColumns)) {
+                    $q->orWhere('name', 'LIKE', "%{$searchTerm}%");
+                }
+                if (in_array('email', $searchColumns)) {
+                    $q->orWhere('email', 'LIKE', "%{$searchTerm}%");
+                }
+                if (in_array('role', $searchColumns)) {
+                    $q->orWhereHas('role', function ($roleQuery) use ($searchTerm) {
+                        $roleQuery->where('role_name', 'LIKE', "%{$searchTerm}%");
+                    });
+                }
+                if (in_array('teams', $searchColumns)) {
+                    $q->orWhereHas('teams', function ($teamQuery) use ($searchTerm) {
+                        $teamQuery->where('name', 'LIKE', "%{$searchTerm}%");
+                    });
+                }
+                if (in_array('vacationRequests', $searchColumns)) {
+                    $q->orWhereHas('vacationRequests', function ($vacationQuery) use ($searchTerm) {
+                        $vacationQuery->where('start_date', 'LIKE', "%{$searchTerm}%")
+                            ->orWhere('end_date', 'LIKE', "%{$searchTerm}%");
+                    });
+                }
+            });
+        }
+
+        $users = $query->get();
+        return view('all-users', compact('users'));
+    }
+
 }

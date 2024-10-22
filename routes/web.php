@@ -31,6 +31,8 @@ Route::middleware(EnsureUserHasRole::class . ':All')->group(function () {
     Route::get('/vacation/request', [VacationRequestController::class, 'createRequestForm'])->name('vacation.request.view');
     Route::get('/reset-password', [UserController::class, 'showResetPasswordForm'])->name('user.showResetPasswordForm');
     Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('user.resetPassword');
+    Route::get('/all-users', [UserController::class, 'allUsers'])->name('allUsers');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 });
 
 Route::middleware(EnsureUserHasRole::class . ':Employee')->group(function () {

@@ -12,6 +12,7 @@
 <body>
 
     <div class="top-right-buttons">
+        <a href="{{ route('allUsers') }}" class="btn btn-secondary">Show all users</a>
         <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-secondary">Reset Password</a>
         <a href="{{ route('user.add') }}" class="btn btn-primary">Add user</a>
         <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
