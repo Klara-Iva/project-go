@@ -3,15 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\VacationRequestSubmitted;
-use App\Mail\VacationRequestNotification;
-use Illuminate\Support\Facades\Mail;
-use APP\Models\User;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\User;
+use App\Jobs\SendEmails;
 
-class SendVacationRequestEmail
+class SendVacationRequestEmail 
 {
-    //implements ShouldQueue
-    // dont forget to "php artisan queue:work" in terminal when working with jobs
+    // dont forget to "php artisan queue:work" in terminal when working with jobs (for database)
 
     public function __construct()
     {
@@ -46,16 +43,7 @@ class SendVacationRequestEmail
         $projectManagerEmails = array_unique(array_merge(...$projectManagerEmails));
         $emails = array_unique(array_merge($teamLeaderEmails, $projectManagerEmails));
 
-        /*  $job = (Mail::to(array_unique(array_merge($teamLeaderEmails, $projectManagerEmails)))
-              ->send(new VacationRequestNotification($user)));
-          dispatch($job);*/
-
-        //TODO prouci jobs, SendVacationRequestEmailJob.php-> nova klasa i u njoj Mail::to  etc i onda ovdje koristi klasa::dispatch(user, email)
-
-        foreach ($emails as $email) {
-            $recipientName = User::where('email', $email)->first()->name ?? 'User';
-            Mail::to($email)->send(new VacationRequestNotification($user, $recipientName, $teamNames));
-        }
+        SendEmails::dispatch($user, $emails, $teamNames);
     }
 
 }

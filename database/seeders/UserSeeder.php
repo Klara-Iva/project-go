@@ -81,6 +81,7 @@ class UserSeeder extends Seeder
 
         for ($i = 0; $i < 100; $i++) {
 
+            //TODO make this simpler with if (randomChance > 80 && randomChange < 86)
             $randomChance = $faker->numberBetween(1, 100);
             if ($randomChance <= 80) {
                 $role_id = 4;
