@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 use App\Repositories\UserRepository;
 
 class UserController extends Controller
@@ -56,9 +55,7 @@ class UserController extends Controller
             'role_id' => $validated['role_id'],
         ];
 
-        $this->userRepository->update($data, $id);
-
-        $user = $this->userRepository->find($id);
+        $user = $this->userRepository->update($data, $id);
         $user->teams()->sync($request->input('team_ids', []));
 
         return redirect()->route('admin.dashboard')->with('success', 'User updated successfully.');
@@ -123,7 +120,7 @@ class UserController extends Controller
             'new_password.confirmed' => 'Passwords do not match.',
         ]);
 
-        $user = Auth::user();
+        $user = $this->userRepository->getAuthenticatedUser();
         $user->password = Hash::make($request->new_password);
         $user->save();
         if ($user->role_id == 2 || $user->role_id == 3) {
@@ -167,7 +164,7 @@ class UserController extends Controller
         $searchTerm = $request->input('search_term');
         $searchColumns = $request->input('search_columns', []);
         $query = $this->userRepository->allWithRelations(['teams', 'role', 'vacationRequests']);
-        
+
         if ($searchTerm) {
             $query->where(function ($q) use ($searchTerm, $searchColumns) {
                 if (in_array('name', $searchColumns)) {

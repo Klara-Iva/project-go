@@ -8,9 +8,16 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
+use App\Repositories\UserRepository;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
+        //
+    }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -18,7 +25,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = $this->userRepository->findByEmail($request->email);
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return redirect()->back()->withErrors(['error' => 'Wrong email or password!']);
@@ -41,7 +48,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $user = User::create([
+        $user = $this->userRepository->create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),

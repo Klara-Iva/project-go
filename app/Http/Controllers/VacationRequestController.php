@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\VacationRequest;
 use Illuminate\Http\Request;
-use Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Events\VacationRequestSubmitted;
-
+use App\Repositories\UserRepository;
 
 class VacationRequestController extends Controller
 {
@@ -15,10 +14,11 @@ class VacationRequestController extends Controller
     public $remainingVacationDays = 0;
     public $vacationRequests;
 
-    public function __construct()
-    {
-        $user = Auth::user();
-        $vacationRequests = VacationRequest::where('user_id', $user->id)->get();
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
+        $this->user = $this->userRepository->getAuthenticatedUser();
+        $vacationRequests = VacationRequest::where('user_id', $this->user->id)->get();
         $this->remainingVacationDays($vacationRequests);
     }
 

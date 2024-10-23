@@ -3,15 +3,16 @@
 namespace App\Listeners;
 
 use App\Events\VacationRequestSubmitted;
-use App\Models\User;
 use App\Jobs\SendEmails;
+use App\Repositories\UserRepository;
 
-class SendVacationRequestEmail 
+class SendVacationRequestEmail
 {
     // dont forget to "php artisan queue:work" in terminal when working with jobs (for database)
 
-    public function __construct()
-    {
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
         //
     }
 
@@ -24,19 +25,8 @@ class SendVacationRequestEmail
         $projectManagerEmails = [];
 
         foreach ($teams as $team) {
-            $teamLeaderEmails[] = User::where('role_id', 2)
-                ->whereHas('teams', function ($query) use ($team) {
-                    $query->where('teams.id', $team->id);
-                })
-                ->pluck('email')
-                ->toArray();
-
-            $projectManagerEmails[] = User::where('role_id', 3)
-                ->whereHas('teams', function ($query) use ($team) {
-                    $query->where('teams.id', $team->id);
-                })
-                ->pluck('email')
-                ->toArray();
+            $teamLeaderEmails[] = $this->userRepository->getEmailsByRoleAndTeam(2, $team->id);
+            $projectManagerEmails[] = $this->userRepository->getEmailsByRoleAndTeam(3, $team->id);
         }
 
         $teamLeaderEmails = array_unique(array_merge(...$teamLeaderEmails));

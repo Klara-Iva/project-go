@@ -57,6 +57,5 @@ Route::middleware(EnsureUserHasRole::class . ':Admin')->group(function () {
     Route::post('/admin/saveUser', [UserController::class, 'saveUser'])->name('user.save');
     Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
-    Route::get('/admin/users/search', [AdminController::class, 'search'])->name('admin.search');
-
+   
 });

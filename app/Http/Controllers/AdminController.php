@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Repositories\UserRepository;
 
 class AdminController extends Controller
 {
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
+        //
+    }
     private function getFilteredUsers(Request $request)
     {
         $searchTerm = $request->input('search_term');
@@ -17,7 +21,7 @@ class AdminController extends Controller
         $sortBy = $request->input('sort_by', 'name');
         $perPage = $request->input('per_page', 15);
 
-        $query = User::with(['role', 'teams', 'vacationRequests']);
+        $query = $this->userRepository->allWithRelations(['role', 'teams', 'vacationRequests']);
 
         if ($searchTerm) {
             $query->where(function ($q) use ($searchTerm, $searchColumns) {
@@ -45,7 +49,7 @@ class AdminController extends Controller
 
     public function dashboard(Request $request)
     {
-        $user = Auth::User();
+        $user = $this->userRepository->getAuthenticatedUser();
         $users = $this->getFilteredUsers($request);
 
         return view('admin.dashboard', [
@@ -60,7 +64,7 @@ class AdminController extends Controller
 
     public function showUserDetails($id)
     {
-        $user = User::findOrFail($id);
+        $user = $this->userRepository->find($id);
         $teams = Team::all();
         $userTeams = $user->teams->pluck('id')->toArray();
 
@@ -73,12 +77,5 @@ class AdminController extends Controller
 
         return view('admin.add-user', compact('teams'));
     }
-
-
-    public function search(Request $request)
-    {
-        return $this->dashboard($request);
-    }
-
 
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -37,6 +38,33 @@ class UserRepository implements UserRepositoryInterface
     public function allWithRelations(array $relations)
     {
         return User::with($relations);
+    }
+
+    public function findByEmail(string $email)
+    {
+        return User::where('email', $email)->first();
+    }
+
+    public function getUsersByTeamIds(array $teamIds)
+    {
+        return User::whereHas('teams', function ($query) use ($teamIds) {
+            $query->whereIn('teams.id', $teamIds);
+        })->pluck('id');
+    }
+
+    public function getAuthenticatedUser()
+    {
+        return Auth::user();
+    }
+
+    public function getEmailsByRoleAndTeam($roleId, $teamId)
+    {
+        return User::where('role_id', $roleId)
+            ->whereHas('teams', function ($query) use ($teamId) {
+                $query->where('teams.id', $teamId);
+            })
+            ->pluck('email')
+            ->toArray();
     }
 
 }

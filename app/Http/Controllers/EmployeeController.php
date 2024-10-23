@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\VacationRequest;
+use App\Repositories\UserRepository;
 
 class EmployeeController extends Controller
 {
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
+        //
+    }
     public function dashboard()
     {
         $userId = Auth::id();
-        $user = Auth::user();
+        $user = $this->userRepository->getAuthenticatedUser();
         if ($user->annual_leave_days < 0) {
             $user->annual_leave_days = 0;
             $user->save();

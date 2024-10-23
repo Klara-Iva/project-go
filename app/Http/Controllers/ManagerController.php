@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Models\VacationRequest;
 use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
 
 class ManagerController extends Controller
 {
+    protected $user;
+
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
+        $this->user = $this->userRepository->getAuthenticatedUser();
+    }
+
     private function getFilteredUsers(Request $request, $teamIds)
     {
         $searchTerm = $request->input('search_term');
@@ -17,7 +24,7 @@ class ManagerController extends Controller
         $sortBy = $request->input('sort_by', 'name');
         $perPage = $request->input('per_page', 15);
 
-        $query = User::with(['role', 'teams', 'vacationRequests'])
+        $query = $this->userRepository->allWithRelations(['role', 'teams', 'vacationRequests'])
             ->whereHas('teams', function ($q) use ($teamIds) {
                 $q->whereIn('teams.id', $teamIds);
             });
@@ -47,7 +54,7 @@ class ManagerController extends Controller
 
     public function dashboard(Request $request)
     {
-        $user = Auth::user();
+        $user = $this->user;
 
         if ($user->annual_leave_days < 0) {
             $user->annual_leave_days = 0;
@@ -65,9 +72,7 @@ class ManagerController extends Controller
             'searchTerm' => $request->input('search_term'),
             'searchColumns' => $request->input('search_columns', [])
         ]);
-
     }
-
 
     public function showRequestDetails($id)
     {
@@ -78,7 +83,7 @@ class ManagerController extends Controller
 
     public function handleApproval(Request $request, $id)
     {
-        $user = Auth::user();
+        $user = $this->user;
         $vacationRequest = VacationRequest::findOrFail($id);
 
         $comment = $request->input('comment', null);
@@ -112,13 +117,9 @@ class ManagerController extends Controller
 
     public function viewAllRequests()
     {
-        $user = Auth::User();
-        $teamIds = $user->teams->pluck('id');
-
-        $teamUsers = User::whereHas('teams', function ($query) use ($teamIds) {
-            $query->whereIn('teams.id', $teamIds);
-        })->pluck('id');
-
+        $user = $this->user;
+        $teamIds = $user->teams->pluck('id')->toArray();
+        $teamUsers = $this->userRepository->getUsersByTeamIds($teamIds);
         $vacationRequests = VacationRequest::whereIn('user_id', $teamUsers)->with('user')->get();
 
         return view('managers.all-team-requests', compact('user', 'vacationRequests'));

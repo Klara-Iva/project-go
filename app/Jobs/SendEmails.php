@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use App\Models\User;
+use App\Repositories\UserRepository;
 
 class SendEmails implements ShouldQueue
 {
@@ -22,7 +22,7 @@ class SendEmails implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct($user, array $emails, array $teamNames)
+    public function __construct($user, array $emails, array $teamNames, protected UserRepository $userRepository)
     {
         $this->user = $user;
         $this->emails = $emails;
@@ -35,8 +35,11 @@ class SendEmails implements ShouldQueue
     public function handle(): void
     {
         foreach ($this->emails as $email) {
-            $recipientName = User::where('email', $email)->first()->name ?? 'User';
+            $recipient = $this->userRepository->findByEmail($email);
+            $recipientName = $recipient->name ?? 'User';
             Mail::to($email)->send(new VacationRequestNotification($this->user, $recipientName, $this->teamNames));
         }
+
     }
+
 }
