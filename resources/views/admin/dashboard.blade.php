@@ -10,136 +10,140 @@
 </head>
 
 <body>
-    <div class="top-right-buttons">
-        <a href="{{ route('allUsers') }}" class="btn btn-primary">Show all users</a>
-        <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-primary">Reset Password</a>
-        <a href="{{ route('user.add') }}" class="btn btn-primary">Add user</a>
-        <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
-            @csrf
-            <button type="submit" class="btn-logout">Logout</button>
-        </form>
+    <div class="nav-bar">
+        <div class="welcome-message">
+            Welcome {{ $user->name }} ({{ $user->role->role_name }})
+        </div>
+        <div class="top-right-buttons">
+            <a href="{{ route('allUsers') }}" class="btn btn-primary">Show all users</a>
+            <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-primary">Reset Password</a>
+            <a href="{{ route('user.add') }}" class="btn btn-primary">Add user</a>
+            <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
+        </div>
     </div>
+    <div class="page-container">
+        <div class="search-container">
 
-    <div class="welcome-message">
-        Welcome {{ $user->name }} ({{ $user->role->role_name }})
-    </div>
-
-    <div class="search-container" style="margin-top: 120px; margin-left:150px;">
-      
-        <div class="search-form">
-             <h1>Search Users</h1> 
-        <form action="{{ route('admin.dashboard') }}" method="GET" >
-            <input type="text" name="search_term" placeholder="Search..." value="{{ request('search_term') }}">
-            <label><input type="checkbox" name="search_columns[]" value="name" {{ in_array('name', request('search_columns', [])) ? 'checked' : '' }}> Name</label>
-            <label><input type="checkbox" name="search_columns[]" value="email" {{ in_array('email', request('search_columns', [])) ? 'checked' : '' }}> Email</label>
-            <button class="button-search" type="submit">Search</button>
-        </form></div>
-    </div>
-
-    <div class="user-container" style="margin-top:100px;">
-      
-        @if (session('success'))
-            <div class="alert alert-success success-alert">
-                {{ session('success') }}
+            <div class="search-form">
+                <h1>Search Users</h1>
+                <form action="{{ route('admin.dashboard') }}" method="GET">
+                    <input type="text" name="search_term" placeholder="Search..." value="{{ request('search_term') }}">
+                    <label><input type="checkbox" name="search_columns[]" value="name" {{ in_array('name', request('search_columns', [])) ? 'checked' : '' }}> Name</label>
+                    <label><input type="checkbox" name="search_columns[]" value="email" {{ in_array('email', request('search_columns', [])) ? 'checked' : '' }}> Email</label>
+                    <button class="button-search" type="submit">Search</button>
+                </form>
             </div>
-        @endif
+        </div>
 
-        @if (session('alert'))
-            <div class="alert alert-danger alert-message">
-                {{ session('alert') }}
-            </div>
-        @endif
+        <div class="user-container">
 
-        <script>
-            setTimeout(function () {
-                var successAlert = document.querySelector('.success-alert');
-                if (successAlert) {
-                    successAlert.style.display = 'none';
-                }
-            }, 2000);
 
-            setTimeout(function () {
-                var alertMessage = document.querySelector('.alert-message');
-                if (alertMessage) {
-                    alertMessage.style.display = 'none';
-                }
-            }, 5500);
-        </script>
-
-        <div class="container">
-        <h1>All Users:</h1>
-            <div class="header-row">
-
-                <div class="header-text">
-                    <a
-                        href="{{ request()->fullUrlWithQuery(['sort_by' => 'name', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
-                        Name
-                        @if ($sortBy == 'name')
-                            @if ($sortOrder == 'asc')
-                                &#9650;
-                            @else
-                                &#9660;
-                            @endif
-                        @endif
-                    </a>
+            @if (session('success'))
+                <div class="alert alert-success success-alert">
+                    {{ session('success') }}
                 </div>
-                <div class="header-text">
-                    <a
-                        href="{{ request()->fullUrlWithQuery(['sort_by' => 'role', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
-                        Role
-                        @if ($sortBy == 'role')
-                            @if ($sortOrder == 'asc')
-                                &#9650;
-                            @else
-                                &#9660;
-                            @endif
-                        @endif
-                    </a>
+            @endif
+
+            @if (session('alert'))
+                <div class="alert alert-danger alert-message">
+                    {{ session('alert') }}
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="perPageSelect">Prikaži po stranici:</label>
-                <select id="perPageSelect" class="form-control" onchange="changePerPage()">
-                    <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
-                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                </select>
-            </div>
+            @endif
 
             <script>
-                function changePerPage() {
-                    var perPage = document.getElementById('perPageSelect').value;
-                    var url = new URL(window.location.href);
-                    url.searchParams.set('per_page', perPage);
-                    window.location.href = url.toString();
-                }
+                setTimeout(function () {
+                    var successAlert = document.querySelector('.success-alert');
+                    if (successAlert) {
+                        successAlert.style.display = 'none';
+                    }
+                }, 2000);
+
+                setTimeout(function () {
+                    var alertMessage = document.querySelector('.alert-message');
+                    if (alertMessage) {
+                        alertMessage.style.display = 'none';
+                    }
+                }, 5500);
             </script>
 
-            <div class="pagination-container">
-                {{ $users->appends(request()->input())->links() }}
-            </div>
+            <div class="container">
+                <h1>All Users:</h1>
+                <div class="header-row">
 
-            <div class="header-row">
-                <div class="header-text">Name</div>
-                <div class="header-text">Role</div>
-                <div class="header-text">Details</div>
-            </div>
+                    <div class="header-text">
+                        <a
+                            href="{{ request()->fullUrlWithQuery(['sort_by' => 'name', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                            Name
+                            @if ($sortBy == 'name')
+                                @if ($sortOrder == 'asc')
+                                    &#9650;
+                                @else
+                                    &#9660;
+                                @endif
+                            @endif
+                        </a>
+                    </div>
+                    <div class="header-text">
+                        <a
+                            href="{{ request()->fullUrlWithQuery(['sort_by' => 'role', 'sort_order' => $sortOrder == 'asc' ? 'desc' : 'asc']) }}">
+                            Role
+                            @if ($sortBy == 'role')
+                                @if ($sortOrder == 'asc')
+                                    &#9650;
+                                @else
+                                    &#9660;
+                                @endif
+                            @endif
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="perPageSelect">Prikaži po stranici:</label>
+                    <select id="perPageSelect" class="form-control" onchange="changePerPage()">
+                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                    </select>
+                </div>
 
-            <div class="container2 mt-4">
-                @if ($users->isEmpty())
-                    <p>No users to show.</p>
-                @else
-                    @foreach ($users as $user)
-                        <div class="user-row">
-                            <div class="user-text">{{ $user->name }}</div>
-                            <div class="user-text">{{ $user->role->role_name }}</div>
-                            <div class="user-text">
-                                <a href="{{ route('user.details', $user->id) }}" class="btn btn-primary">More Details</a>
+                <script>
+                    function changePerPage() {
+                        var perPage = document.getElementById('perPageSelect').value;
+                        var url = new URL(window.location.href);
+                        url.searchParams.set('per_page', perPage);
+                        window.location.href = url.toString();
+                    }
+                </script>
+
+                <div class="pagination-container">
+                    {{ $users->appends(request()->input())->links() }}
+                </div>
+
+                <div class="header-row">
+                    <div class="header-text">Name</div>
+                    <div class="header-text">Role</div>
+                    <div class="header-text">Details</div>
+                </div>
+
+                <div class="container2 mt-4">
+                    @if ($users->isEmpty())
+                        <p>No users to show.</p>
+                    @else
+                        @foreach ($users as $user)
+                            <div class="user-row">
+                                <div class="user-text">{{ $user->name }}</div>
+                                <div class="user-text">{{ $user->role->role_name }}</div>
+                                <div class="user-text">
+                                    <a href="{{ route('user.details', $user->id) }}" class="btn btn-primary">More Details</a>
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                @endif
+                        @endforeach
+                    @endif
+                </div>
             </div>
         </div>
     </div>
