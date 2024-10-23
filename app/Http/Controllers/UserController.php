@@ -7,9 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\UserRepository;
 
 class UserController extends Controller
 {
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {
+        //
+    }
+
     public function updateUser(Request $request, $id)
     {
         $rules = [
@@ -43,11 +50,15 @@ class UserController extends Controller
 
         $validated = $validator->validated();
 
-        $user = User::findOrFail($id);
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->role_id = $validated['role_id'];
-        $user->save();
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role_id' => $validated['role_id'],
+        ];
+
+        $this->userRepository->update($data, $id);
+
+        $user = $this->userRepository->find($id);
         $user->teams()->sync($request->input('team_ids', []));
 
         return redirect()->route('admin.dashboard')->with('success', 'User updated successfully.');
@@ -86,12 +97,14 @@ class UserController extends Controller
 
         $validated = $validator->validated();
 
-        $user = User::create([
+        $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role_id' => $validated['role_id'],
-        ]);
+        ];
+
+        $user = $this->userRepository->create($data);
 
         if (!empty($validated['team_ids'])) {
             $user->teams()->sync($validated['team_ids']);
@@ -128,7 +141,7 @@ class UserController extends Controller
 
     public function showRequests($id)
     {
-        $user = User::findOrFail($id);
+        $user = $this->userRepository->find($id);
         $vacationRequests = $user->vacationRequests()->get();
         return view('user-requests', compact('user', 'vacationRequests'));
     }
@@ -139,13 +152,13 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Admins cannot delete themselves.');
         }
 
-        $user->delete();
+        $this->userRepository->delete($user->id);
         return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.');
     }
 
     public function allUsers()
     {
-        $users = User::with(['teams', 'role'])->get();
+        $users = $this->userRepository->allWithRelations(['teams', 'role']);
         return view('all-users', compact('users'));
     }
 
@@ -153,8 +166,8 @@ class UserController extends Controller
     {
         $searchTerm = $request->input('search_term');
         $searchColumns = $request->input('search_columns', []);
-        $query = User::with(['role', 'teams', 'vacationRequests']);
-
+        $query = $this->userRepository->allWithRelations(['teams', 'role', 'vacationRequests']);
+        
         if ($searchTerm) {
             $query->where(function ($q) use ($searchTerm, $searchColumns) {
                 if (in_array('name', $searchColumns)) {

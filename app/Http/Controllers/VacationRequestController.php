@@ -11,12 +11,19 @@ use App\Events\VacationRequestSubmitted;
 
 class VacationRequestController extends Controller
 {
+    public $user;
     public $remainingVacationDays = 0;
+    public $vacationRequests;
 
     public function __construct()
     {
         $user = Auth::user();
         $vacationRequests = VacationRequest::where('user_id', $user->id)->get();
+        $this->remainingVacationDays($vacationRequests);
+    }
+
+    public function remainingVacationDays($vacationRequests)
+    {
         $pendingDays = 0;
 
         foreach ($vacationRequests as $request) {
@@ -26,7 +33,7 @@ class VacationRequestController extends Controller
 
         }
 
-        $remainingVacationDays = $user->annual_leave_days - $pendingDays;
+        $remainingVacationDays = $this->user->annual_leave_days - $pendingDays;
 
         if ($remainingVacationDays <= 0) {
             $this->remainingVacationDays = 0;
@@ -38,7 +45,7 @@ class VacationRequestController extends Controller
 
     public function createRequestForm()
     {
-        $user = Auth::user();
+        $user = $this->user;
         $remainingVacationDays = $this->remainingVacationDays;
 
         return view('make-new-vacation-request', compact('user', 'remainingVacationDays'));
@@ -46,8 +53,6 @@ class VacationRequestController extends Controller
 
     public function sendRequest(Request $request)
     {
-        $user = Auth::user();
-
         $rules = [
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -77,7 +82,7 @@ class VacationRequestController extends Controller
 
         $validated = $validator->validated();
 
-        $existingRequests = VacationRequest::where('user_id', $user->id)
+        $existingRequests = VacationRequest::where('user_id', $this->user->id)
             ->where('status', '!=', 'rejected')
             ->get();
 
@@ -92,25 +97,25 @@ class VacationRequestController extends Controller
         }
 
         $vacationRequest = new VacationRequest();
-        $vacationRequest->user_id = $user->id;
+        $vacationRequest->user_id = $this->user->id;
         $vacationRequest->start_date = $validated['start_date'];
         $vacationRequest->end_date = $validated['end_date'];
         $vacationRequest->days_requested = $validated['days_off'];
 
-        if ($user->role_id == 2) {
+        if ($this->user->role_id == 2) {
             $vacationRequest->team_leader_approved = 'approved';
         }
 
-        if ($user->role_id == 3) {
+        if ($this->user->role_id == 3) {
             $vacationRequest->project_manager_approved = 'approved';
         }
 
-        event(new VacationRequestSubmitted($user));
+        event(new VacationRequestSubmitted($this->user));
 
         $vacationRequest->save();
         session()->flash('success', 'Vacation request successfully submitted.');
 
-        if ($user->role_id == 2 || $user->role_id == 3) {
+        if ($this->user->role_id == 2 || $this->user->role_id == 3) {
             return redirect()->route('managers.dashboard');
         } else {
             return redirect()->route('employee.dashboard');
