@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Events\VacationRequestSubmitted;
 use App\Repositories\UserRepository;
+use App\Http\Requests\SendNewVacationRequest;
 
 class VacationRequestController extends Controller
 {
@@ -25,22 +26,14 @@ class VacationRequestController extends Controller
     public function remainingVacationDays($vacationRequests)
     {
         $pendingDays = 0;
-
         foreach ($vacationRequests as $request) {
             if ($request->status == 'pending') {
                 $pendingDays += $request->days_requested;
             }
-
         }
 
         $remainingVacationDays = $this->user->annual_leave_days - $pendingDays;
-
-        if ($remainingVacationDays <= 0) {
-            $this->remainingVacationDays = 0;
-        } else {
-            $this->remainingVacationDays = $remainingVacationDays;
-        }
-
+        $this->remainingVacationDays = max($remainingVacationDays, 0);
     }
 
     public function createRequestForm()
@@ -53,26 +46,10 @@ class VacationRequestController extends Controller
 
     public function sendRequest(Request $request)
     {
-        $rules = [
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'days_off' => 'required|integer|min:1|max:' . $this->remainingVacationDays,
-        ];
-
-        $messages = [
-            'start_date.required' => 'Start date is required.',
-            'start_date.date' => 'Start date must be a valid date.',
-            'start_date.after_or_equal' => 'The start date cannot be in the past.',
-            'end_date.required' => 'End date is required.',
-            'end_date.date' => 'End date must be a valid date.',
-            'end_date.after_or_equal' => 'The end date must be after start day.',
-            'days_off.required' => 'Please specify the number of days off.',
-            'days_off.integer' => 'Days off must be a whole number.',
-            'days_off.min' => 'You must request at least 1 day off.',
-            'days_off.max' => 'You cannot request more days off than your available annual leave days (' . $this->remainingVacationDays . ').',
-        ];
-
-        $validator = Validator::make($request->all(), $rules, $messages);
+        $vacationRequests = VacationRequest::where('user_id', $this->user->id)->get();
+        $this->remainingVacationDays($vacationRequests);
+        $newRequest = new SendNewVacationRequest($this->remainingVacationDays);
+        $validator = Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -82,7 +59,7 @@ class VacationRequestController extends Controller
 
         $validated = $validator->validated();
 
-        $existingRequests = VacationRequest::where('user_id', $this->user->id)
+        $existingRequests = VacationRequest::where('user_id', $request->user()->id)
             ->where('status', '!=', 'rejected')
             ->get();
 
@@ -97,30 +74,29 @@ class VacationRequestController extends Controller
         }
 
         $vacationRequest = new VacationRequest();
-        $vacationRequest->user_id = $this->user->id;
+        $vacationRequest->user_id = $request->user()->id;
         $vacationRequest->start_date = $validated['start_date'];
         $vacationRequest->end_date = $validated['end_date'];
         $vacationRequest->days_requested = $validated['days_off'];
 
-        if ($this->user->role_id == 2) {
+        if ($request->user()->role_id == 2) {
             $vacationRequest->team_leader_approved = 'approved';
         }
 
-        if ($this->user->role_id == 3) {
+        if ($request->user()->role_id == 3) {
             $vacationRequest->project_manager_approved = 'approved';
         }
 
-        event(new VacationRequestSubmitted($this->user));
+        event(new VacationRequestSubmitted($request->user()));
 
         $vacationRequest->save();
         session()->flash('success', 'Vacation request successfully submitted.');
 
-        if ($this->user->role_id == 2 || $this->user->role_id == 3) {
+        if ($request->user()->role_id == 2 || $request->user()->role_id == 3) {
             return redirect()->route('managers.dashboard');
         } else {
             return redirect()->route('employee.dashboard');
         }
-
     }
 
     public function showRequestDetails($id)

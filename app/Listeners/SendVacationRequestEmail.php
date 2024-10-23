@@ -33,7 +33,7 @@ class SendVacationRequestEmail
         $projectManagerEmails = array_unique(array_merge(...$projectManagerEmails));
         $emails = array_unique(array_merge($teamLeaderEmails, $projectManagerEmails));
 
-        SendEmails::dispatch($user, $emails, $teamNames);
+        SendEmails::dispatch($user, $emails, $teamNames, app(UserRepository::class));
     }
 
 }
