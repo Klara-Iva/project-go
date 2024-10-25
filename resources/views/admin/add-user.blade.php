@@ -72,11 +72,11 @@
             <div class="form-group">
                 <label for="role">Role</label>
                 <select class="form-control" id="role" name="role_id" required>
-                    <option value="4" {{ old('role_id') == 4 ? 'selected' : '' }}>Employee</option>
-                    <option value="1" {{ old('role_id') == 1 ? 'selected' : '' }}>Admin</option>
-                    <option value="3" {{ old('role_id') == 3 ? 'selected' : '' }}>Project Manager</option>
-                    <option value="2" {{ old('role_id') == 2 ? 'selected' : '' }}>Team Leader</option>
-                    <option value="5" {{ old('role_id') == 5 ? 'selected' : '' }}>Without role</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                            {{ $role->role_name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 

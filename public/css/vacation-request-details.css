@@ -7,7 +7,7 @@ body {
     align-items: center;
     height: 100vh;
     font-family: Arial, sans-serif;
-    background-image: url('/images/background.jpg');
+    background-image: url("/images/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -68,7 +68,7 @@ input[type="radio"] {
 }
 
 button.btn {
-    background-color: #007bff;
+    background-color: #a83273;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
@@ -79,7 +79,7 @@ button.btn {
 }
 
 button.btn:hover {
-    background-color: #0056b3;
+    background-color: #731a54;
 }
 
 textarea.form-control {
@@ -91,8 +91,8 @@ textarea.form-control {
 }
 
 textarea.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: #731a54;
+    box-shadow: 0 0 5px #731a5480;
 }
 
 .form-group p {

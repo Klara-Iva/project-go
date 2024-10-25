@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-image: url('/images/background.jpg');
+    background-image: url("/images/background.jpg");
     background-size: cover;
     background-position: center;
     margin: 0;
@@ -41,7 +41,6 @@ input[type="number"] {
 }
 
 button {
-    margin-top: 15px;
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
@@ -51,8 +50,16 @@ button {
 }
 
 .send-btn {
-    background-color: #4CAF50;
+    background-color: #a83273;
+    border-color: #a83273;
     color: white;
+    margin-top: 30px;
+    width: auto;
+}
+
+.send-btn:hover {
+    background-color: #731a54;
+    border-color: #731a54;
 }
 
 .back-btn,
@@ -68,13 +75,13 @@ button {
 }
 
 .back-btn {
-    background-color: #ff5e57;
+    background-color: #a83273;
     top: 20px;
     left: 20px;
 }
 
 .logout-btn {
-    background-color: #333;
+    background-color: #a83273;
     top: 20px;
     right: 20px;
 }
@@ -100,4 +107,8 @@ button {
 .fade-out {
     opacity: 0;
     transition: opacity 1s ease-in-out;
+}
+
+.form-button {
+    text-align: center;
 }

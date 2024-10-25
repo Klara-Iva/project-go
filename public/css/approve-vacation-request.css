@@ -7,7 +7,7 @@ body {
     align-items: center;
     height: 100vh;
     font-family: Arial, sans-serif;
-    background-image: url('/images/background.jpg');
+    background-image: url("/images/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -21,6 +21,22 @@ body {
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 600px;
+}
+
+.detail-right {
+    text-align: right;
+}
+
+.optionsform {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.optionsform label {
+    margin-right: 30px;
+    font-size: 1.1em;
 }
 
 h2 {
@@ -40,12 +56,11 @@ h2 {
     margin-top: 20px;
 }
 
-.form-group {
-    margin-top: 20px;
-}
-
 .form-group label {
     font-weight: bold;
+}
+.form-group {
+    margin-top: 20px;
 }
 
 .detail span {
@@ -62,13 +77,15 @@ h2 {
 }
 
 input[type="radio"] {
-    margin-right: 10px;
+    transform: scale(1.5);
     vertical-align: middle;
     cursor: pointer;
+    position: relative;
+    top: -3px;
 }
 
 button.btn {
-    background-color: #007bff;
+    background-color: #a83273;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
@@ -79,7 +96,7 @@ button.btn {
 }
 
 button.btn:hover {
-    background-color: #0056b3;
+    background-color: #731a54;
 }
 
 textarea.form-control {
@@ -91,8 +108,8 @@ textarea.form-control {
 }
 
 textarea.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: #731a54;
+    box-shadow: 0 0 5px #731a5480;
 }
 
 .form-group p {

@@ -97,12 +97,16 @@ class UserSeeder extends Seeder
 
             ]);
 
-            $randomTeamId = $faker->randomElement($teamIds);
+            if ($role_id != 5) {
+                $randomTeamId = $faker->randomElement($teamIds);
 
-            DB::table('user_team')->insert([
-                'user_id' => $user->id,
-                'team_id' => $randomTeamId,
-            ]);
+                DB::table('user_team')->insert([
+                    'user_id' => $user->id,
+                    'team_id' => $randomTeamId,
+                ]);
+
+            }
+
         }
 
     }

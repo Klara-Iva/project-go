@@ -5,14 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Users</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/all-users.css') }}">
 </head>
 
 <body>
+    <div class="header-row">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-back">Back</a>
+    </div>
 
-    <body>
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Back</a>
-        <div class="search-container">
+    <div class="page-container">
+
+        <div class="search-form">
             <h1>Search Users</h1>
             <form action="{{ route('users.search') }}" method="GET">
                 <input type="text" name="search_term" placeholder="Search..." value="{{ request('search_term') }}">
@@ -24,30 +28,31 @@
                 <label><input type="checkbox" name="search_columns[]" value="vacationRequests" {{ in_array('vacationRequests', request('search_columns', [])) ? 'checked' : '' }}> Vacation
                     Requests</label>
 
-                <button type="submit">Search</button>
+                <button type="submit" class=" button-search">Search</button>
             </form>
 
-            <form method="GET" action="{{ route('users.search.download.csv') }}">
-                <input type="hidden" name="search_term" value="{{ request('search_term') }}">
-                @foreach (request('search_columns', []) as $column)
-                    <input type="hidden" name="search_columns[]" value="{{ $column }}">
-                @endforeach
-                <button type="submit">Download CSV</button>
-            </form>
+            <div class="download-buttons">
+                <form method="GET" action="{{ route('users.search.download.csv') }}">
+                    <input type="hidden" name="search_term" value="{{ request('search_term') }}">
+                    @foreach (request('search_columns', []) as $column)
+                        <input type="hidden" name="search_columns[]" value="{{ $column }}">
+                    @endforeach
+                    <button type="submit" class="btn btn-primary">Download CSV</button>
+                </form>
 
-            <form method="GET" action="{{ route('users.search.download.pdf') }}">
-                <input type="hidden" name="search_term" value="{{ request('search_term') }}">
-                @foreach (request('search_columns', []) as $column)
-                    <input type="hidden" name="search_columns[]" value="{{ $column }}">
-                @endforeach
-                <button type="submit">Download PDF</button>
-            </form>
+                <form method="GET" action="{{ route('users.search.download.pdf') }}">
+                    <input type="hidden" name="search_term" value="{{ request('search_term') }}">
+                    @foreach (request('search_columns', []) as $column)
+                        <input type="hidden" name="search_columns[]" value="{{ $column }}">
+                    @endforeach
+                    <button type="submit" class="btn btn-primary">Download PDF</button>
+                </form>
+            </div>
         </div>
-
 
         <div class="user-container">
             <h1>All Users</h1>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -77,8 +82,6 @@
                                         {{ $vacation->start_date }} - {{ $vacation->end_date }}
                                         @if (!$loop->last), @endif
                                     @endforeach
-                                @else
-                                    No vacation requests for this user
                                 @endif
                             </td>
                         </tr>
@@ -86,6 +89,11 @@
                 </tbody>
             </table>
         </div>
-    </body>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 
 </html>

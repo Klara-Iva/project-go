@@ -5,6 +5,7 @@ use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationRequestController;
 use App\Http\Middleware\EnsureUserHasRole;
@@ -32,7 +33,7 @@ Route::middleware(EnsureUserHasRole::class . ':All')->group(function () {
     Route::get('/vacation/request', [VacationRequestController::class, 'createRequestForm'])->name('vacation.request.view');
     Route::get('/reset-password', [UserController::class, 'showResetPasswordForm'])->name('user.showResetPasswordForm');
     Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('user.resetPassword');
-    Route::get('/all-users', [UserController::class, 'allUsers'])->name('allUsers');
+    Route::get('/all-users', [UserController::class, 'showAllUsers'])->name('allUsers');
 });
 
 Route::middleware(EnsureUserHasRole::class . ':Employee')->group(function () {
@@ -43,7 +44,7 @@ Route::middleware(EnsureUserHasRole::class . ':Employee')->group(function () {
 
 Route::middleware(EnsureUserHasRole::class . ':Managers')->group(function () {
     Route::get('/managers/dashboard', [ManagerController::class, 'dashboard'])->name('managers.dashboard');
-    Route::get('/request/{id}/details', [ManagerController::class, 'showRequestDetails'])->name('request.details');
+    Route::get('/request/{id}/details', [ManagerController::class, 'showVacationRequestDetails'])->name('request.details');
     Route::post('/request/{id}/approve', [ManagerController::class, 'handleApproval'])->name('vacation.approval');
     Route::get('/user/{id}/requests', [UserController::class, 'showRequests'])->name('user.requests');
     Route::get('/managers/allrequests', [ManagerController::class, 'viewAllRequests'])->name('allrequests');
@@ -57,7 +58,7 @@ Route::middleware(EnsureUserHasRole::class . ':Admin')->group(function () {
     Route::post('/admin/saveUser', [UserController::class, 'saveUser'])->name('user.save');
     Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
-    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
-    Route::get('/users/search/download-csv', [UserController::class, 'downloadCSV'])->name('users.search.download.csv');
-    Route::get('/users/search/download-pdf', [UserController::class, 'downloadPDF'])->name('users.search.download.pdf');
+    Route::get('/users/search', [SearchController::class, 'search'])->name('users.search');
+    Route::get('/users/search/download-csv', [DownloadController::class, 'downloadCSV'])->name('users.search.download.csv');
+    Route::get('/users/search/download-pdf', [DownloadController::class, 'downloadPDF'])->name('users.search.download.pdf');
 });

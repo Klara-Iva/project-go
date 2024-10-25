@@ -8,7 +8,7 @@ class SendNewVacationRequest extends FormRequest
 {
     protected $remainingVacationDays;
 
-    public function __construct($remainingVacationDays)
+    public function setRemainingVacationDays($remainingVacationDays)
     {
         $this->remainingVacationDays = $remainingVacationDays;
     }

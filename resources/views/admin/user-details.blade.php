@@ -10,14 +10,14 @@
 </head>
 
 <body>
-<a href="{{ route('admin.dashboard') }}" class="btn-back">Back</a>
-     
+    <a href="{{ route('admin.dashboard') }}" class="btn-back">Back</a>
+
     <script>
         if (window.performance && window.performance.navigation.type === 2) {
             window.location.reload(true);
         }
-
     </script>
+
     <div class="container">
         <h1>User Details</h1>
         @if(session('success'))
@@ -26,12 +26,12 @@
             </div>
         @endif
 
-        @if (session('error'))
+        @if(session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}
             </div>
         @endif
-    
+
         <form action="{{ route('user.update', $user->id) }}" method="POST">
             @csrf
 
@@ -44,39 +44,19 @@
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" required>
             </div>
+
             @if($user->role_id != 1)
                 <div class="form-group">
                     <label for="role" class="radio-label">Role:</label>
-                    <div>
-                        <label>
-                            <input type="radio" name="role_id" value="1" {{ $user->role_id == 1 ? 'checked' : '' }}> Admin
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="radio" name="role_id" value="2" {{ $user->role_id == 2 ? 'checked' : '' }}> Team
-                            Leader
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="radio" name="role_id" value="3" {{ $user->role_id == 3 ? 'checked' : '' }}> Project
-                            Manager
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="radio" name="role_id" value="4" {{ $user->role_id == 4 ? 'checked' : '' }}> Employee
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="radio" name="role_id" value="5" {{ $user->role_id == 5 ? 'checked' : '' }}> Without
-                            role
-                        </label>
-                    </div>
+                    @foreach($roles as $role)
+                        <div>
+                            <label>
+                                <input type="radio" name="role_id" value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'checked' : '' }}>
+                                {{ $role->role_name }}
+                            </label>
+                        </div>
+                    @endforeach
                 </div>
-
 
                 <div class="form-group">
                     <label for="teams" class="checkbox-label">Teams:</label>
@@ -90,15 +70,16 @@
                     </div>
                 </div>
             @endif
+
             <button type="submit" class="btn btn-primary">Update User</button>
         </form>
+
         <form action="{{ route('user.destroy', $user->id) }}" method="POST"
             onsubmit="return confirm('Are you sure you want to delete this user?');">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Delete User</button>
         </form>
-
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

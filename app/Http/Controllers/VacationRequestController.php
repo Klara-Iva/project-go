@@ -44,22 +44,59 @@ class VacationRequestController extends Controller
         return view('make-new-vacation-request', compact('user', 'remainingVacationDays'));
     }
 
+    public function showRequestDetails($id)
+    {
+        $vacationRequest = VacationRequest::find($id);
+        return view('employee.vacation-request-details', compact('vacationRequest'));
+    }
+
     public function sendRequest(Request $request)
     {
-        $vacationRequests = VacationRequest::where('user_id', $this->user->id)->get();
+        $vacationRequests = $this->getVacationRequests();
         $this->remainingVacationDays($vacationRequests);
-        $newRequest = new SendNewVacationRequest($this->remainingVacationDays);
+
+        $newRequest = new SendNewVacationRequest();
+        $newRequest->setRemainingVacationDays($this->remainingVacationDays);
+
+
         $validator = Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
 
         if ($validator->fails()) {
-            return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         $validated = $validator->validated();
 
-        $existingRequests = VacationRequest::where('user_id', $request->user()->id)
+        if ($this->hasOverlappingRequest($validated)) {
+            return response()->json(['errors' => ['error' => 'Your vacation request overlaps with an existing request.']], 422);
+        }
+
+        $vacationRequest = $this->createVacationRequest($request, $validated);
+        $this->handleSpecialRoles($request, $vacationRequest);
+        $vacationRequest->save();
+
+        event(new VacationRequestSubmitted($request->user()));
+        session()->flash('success', 'Vacation request successfully submitted.');
+
+        return response()->json(['message' => 'Vacation request successfully submitted.']);
+    }
+
+
+    protected function getVacationRequests()
+    {
+        return VacationRequest::where('user_id', $this->user->id)->get();
+    }
+
+    protected function validateRequest(Request $request)
+    {
+        $newRequest = new SendNewVacationRequest();
+        $newRequest->setRemainingVacationDays($this->remainingVacationDays);
+        return Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
+    }
+
+    protected function hasOverlappingRequest($validated)
+    {
+        $existingRequests = VacationRequest::where('user_id', auth()->id())
             ->where('status', '!=', 'rejected')
             ->get();
 
@@ -69,16 +106,35 @@ class VacationRequestController extends Controller
                 ($validated['end_date'] >= $existingRequest->start_date && $validated['end_date'] <= $existingRequest->end_date) ||
                 ($validated['start_date'] <= $existingRequest->start_date && $validated['end_date'] >= $existingRequest->end_date)
             ) {
-                return redirect()->back()->withErrors(['error' => 'Your vacation request overlaps with an existing request.']);
+                return true;
             }
+
         }
 
+        return false;
+    }
+
+    protected function createVacationRequest(Request $request, $validated)
+    {
         $vacationRequest = new VacationRequest();
         $vacationRequest->user_id = $request->user()->id;
         $vacationRequest->start_date = $validated['start_date'];
         $vacationRequest->end_date = $validated['end_date'];
         $vacationRequest->days_requested = $validated['days_off'];
 
+        return $vacationRequest;
+    }
+    protected function redirectUserBasedOnRole(Request $request)
+    {
+        if ($request->user()->role_id == 2 || $request->user()->role_id == 3) {
+            return redirect()->route('managers.dashboard');
+        } else {
+            return redirect()->route('employee.dashboard');
+        }
+    }
+
+    protected function handleSpecialRoles(Request $request, $vacationRequest)
+    {
         if ($request->user()->role_id == 2) {
             $vacationRequest->team_leader_approved = 'approved';
         }
@@ -87,22 +143,6 @@ class VacationRequestController extends Controller
             $vacationRequest->project_manager_approved = 'approved';
         }
 
-        event(new VacationRequestSubmitted($request->user()));
-
-        $vacationRequest->save();
-        session()->flash('success', 'Vacation request successfully submitted.');
-
-        if ($request->user()->role_id == 2 || $request->user()->role_id == 3) {
-            return redirect()->route('managers.dashboard');
-        } else {
-            return redirect()->route('employee.dashboard');
-        }
-    }
-
-    public function showRequestDetails($id)
-    {
-        $vacationRequest = VacationRequest::find($id);
-        return view('employee.vacation-request-details', compact('vacationRequest'));
     }
 
 }

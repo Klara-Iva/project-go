@@ -26,35 +26,66 @@
     <div class="container">
         <h2>New Vacation Request</h2>
         <div>
-            Number of days you can request: {{ $remainingVacationDays }}
+            Number of days you can request: <strong style=" font-size: 1.5em;">{{ $remainingVacationDays }}</strong>
         </div>
 
 
-        <form method="POST" action="{{ route('submitVacationRequest') }}">
+        <form method="POST" id="vacationRequestForm" action="{{ route('submitVacationRequest') }}">
             @csrf
             <label for="start_date">Start Date:</label>
             <input type="date" id="start_date" name="start_date" value="{{ old('start_date') }}" required>
-            @error('start_date')
-                <div class="error">{{ $message }}</div>
-            @enderror
+            <div class="error" id="start_date_error"></div>
 
             <label for="end_date">End Date:</label>
             <input type="date" id="end_date" name="end_date" value="{{ old('end_date') }}" required>
-            @error('end_date')
-                <div class="error">{{ $message }}</div>
-            @enderror
+            <div class="error" id="end_date_error"></div>
 
             <label for="days_off">Days Off:</label>
             <input type="number" id="days_off" name="days_off" value="{{ old('days_off') }}" required min="1">
-            @error('days_off')
-                <div class="error">{{ $message }}</div>
-            @enderror
+            <div class="error" id="days_off_error"></div>
 
-            <button type="submit" class="send-btn">Send Request</button>
+            <div class="form-button">
+                <button type="submit" class="send-btn">Send Request</button>
+            </div>
         </form>
+
     </div>
 
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $('#vacationRequestForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $('.error').text('');
+
+            $.ajax({
+                url: "{{ route('submitVacationRequest') }}",
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    alert(response.message);
+                },
+                error: function (xhr) {
+                    const errors = xhr.responseJSON.errors;
+                    if (errors) {
+                        if (errors.start_date) {
+                            $('#start_date_error').text(errors.start_date[0]);
+                        }
+                        if (errors.end_date) {
+                            $('#end_date_error').text(errors.end_date[0]);
+                        }
+                        if (errors.days_off) {
+                            $('#days_off_error').text(errors.days_off[0]);
+                        }
+                        if (errors.error) {
+                            alert(errors.error);
+                        }
+                    }
+                }
+            });
+        });
+    </script>
     <script>
         const errorPopup = document.getElementById('error-popup');
         if (errorPopup) {

@@ -15,6 +15,12 @@
     <div class="container">
         <h2>Request Details</h2>
         <div class="detail"><strong>Requested by:</strong> <span>{{ $request->user->name }}</span></div>
+        <div class="detail detail-right"><strong>Team/s:</strong><span>
+                @foreach ($request->user->teams as $team)
+                    {{ $team->name }}
+                    @if (!$loop->last), @endif
+                @endforeach
+            </span></div>
         <div class="detail"><strong>Start date:</strong> <span>{{ $request->start_date }}</span></div>
         <div class="detail"><strong>End date:</strong> <span>{{ $request->end_date }}</span></div>
         <div class="detail"><strong>Duration:</strong> <span>{{ $request->days_requested }} days</span></div>
@@ -51,12 +57,13 @@
 
             <div class="form-group">
                 <label for="approval">Approval:</label><br>
-                <input type="radio" id="approve" name="action" value="approved" required>
-                <label for="approve">Approve</label>
-                <input type="radio" id="reject" name="action" value="rejected" required>
-                <label for="reject">Reject</label>
+                <div class="optionsform">
+                    <input type="radio" id="approve" name="action" value="approved" required>
+                    <label for="approve">Approve</label>
+                    <input type="radio" id="reject" name="action" value="rejected" required>
+                    <label for="reject">Reject</label>
+                </div>
             </div>
-
             <button type="submit" class="btn btn-primary btn-block">Submit</button>
         </form>
 

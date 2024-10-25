@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 
@@ -45,8 +46,6 @@ class AdminController extends Controller
         return $query->paginate($perPage)->appends($request->all());
     }
 
-
-
     public function dashboard(Request $request)
     {
         $user = $this->userRepository->getAuthenticatedUser();
@@ -66,16 +65,17 @@ class AdminController extends Controller
     {
         $user = $this->userRepository->find($id);
         $teams = Team::all();
+        $roles = Role::all();
         $userTeams = $user->teams->pluck('id')->toArray();
 
-        return view('admin.user-details', compact('user', 'teams', 'userTeams'));
+        return view('admin.user-details', compact('user', 'teams', 'userTeams', 'roles'));
     }
 
     public function getAddNewUserView()
     {
         $teams = Team::all();
-
-        return view('admin.add-user', compact('teams'));
+        $roles = Role::all();
+        return view('admin.add-user', compact('teams', 'roles'));
     }
 
 }

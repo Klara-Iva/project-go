@@ -11,11 +11,12 @@
 
 <body>
     <div class="top-right-buttons">
-        <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-secondary">Reset Password</a>
+        <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-primary">Reset Password</a>
         <a href="{{ route('vacation.request.view') }}" class="btn btn-primary">New vacation Request</a>
-        <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
+        <a href="{{ route('logout') }}" class="btn btn-primary"
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
-            <button type="submit" class="btn-logout">Logout</button>
         </form>
     </div>
     <div class="welcome-message">

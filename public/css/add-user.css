@@ -1,5 +1,5 @@
 body {
-    background-image: url('/images/background.jpg');
+    background-image: url("/images/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -8,7 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-family: 'Arial', sans-serif;
+    font-family: "Arial", sans-serif;
     color: white;
 }
 
@@ -62,7 +62,6 @@ label {
     border-color: #731a54;
     color: #ffffff;
     box-shadow: 0 4px 10px #731a5480;
-  
 }
 
 .form-check-label {

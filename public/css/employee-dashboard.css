@@ -1,5 +1,5 @@
 body {
-    background-image: url('/images/background.jpg');
+    background-image: url("/images/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -10,7 +10,6 @@ body {
     align-items: center;
     font-family: Arial, sans-serif;
     color: #ffffff;
-
 }
 
 .container {
@@ -89,14 +88,13 @@ p {
 }
 
 .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-
+    background-color: #a83273;
+    border-color: #a83273;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    background-color: #731a54;
+    border-color: #731a54;
 }
 
 .welcome-message {

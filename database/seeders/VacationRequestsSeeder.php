@@ -18,25 +18,27 @@ class VacationRequestsSeeder extends Seeder
     {
         $users = User::all();
         foreach ($users as $user) {
-            if (rand(0, 1)) {
-                $numberOfRequests = rand(1, 4);
+            if ($user->role_id != 5) {
+                if (rand(0, 1)) {
+                    $numberOfRequests = rand(1, 4);
 
-                for ($i = 0; $i < $numberOfRequests; $i++) {
-                    $startDate = Carbon::now()->addDays(rand(1, 30));
-                    $daysRequested = rand(1, min(7, $user->annual_leave_days));
-                    $endDate = (clone $startDate)->addDays($daysRequested - 1);
+                    for ($i = 0; $i < $numberOfRequests; $i++) {
+                        $startDate = Carbon::now()->addDays(rand(1, 30));
+                        $daysRequested = rand(1, min(7, $user->annual_leave_days));
+                        $endDate = (clone $startDate)->addDays($daysRequested - 1);
 
-                    VacationRequest::create([
-                        'user_id' => $user->id,
-                        'start_date' => $startDate,
-                        'end_date' => $endDate,
-                        'days_requested' => $daysRequested,
-                    ]);
+                        VacationRequest::create([
+                            'user_id' => $user->id,
+                            'start_date' => $startDate,
+                            'end_date' => $endDate,
+                            'days_requested' => $daysRequested,
+                        ]);
 
-                    $user->save();
+                        $user->save();
 
-                    if ($user->annual_leave_days <= 0) {
-                        break;
+                        if ($user->annual_leave_days <= 0) {
+                            break;
+                        }
                     }
                 }
             }

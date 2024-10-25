@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
-use App\Repositories\UserRepositoryInterface;
+use App\Interfaces\UserRepositoryInterface;
 use App\Repositories\UserRepository;
+use App\Interfaces\SearchServiceInterface;
+use App\Http\Controllers\SearchController;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrap();
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(SearchServiceInterface::class, SearchController::class);
     }
 
     /**

@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use app\Models\Project;
 
 class User extends Authenticatable
 {
@@ -33,11 +31,6 @@ class User extends Authenticatable
     public function teams()
     {
         return $this->belongsToMany(Team::class, 'user_team', 'user_id', 'team_id');
-    }
-
-    public function projects(): HasMany
-    {
-        return $this->hasMany(Project::class);
     }
 
     public function vacationRequests()
