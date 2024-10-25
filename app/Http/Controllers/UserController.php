@@ -8,6 +8,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -98,7 +101,7 @@ class UserController extends Controller
 
     public function allUsers()
     {
-        $users = $this->userRepository->allWithRelations(['teams', 'role']);
+        $users = $this->userRepository->allWithRelations(['teams', 'role'])->get();
         return view('all-users', compact('users'));
     }
 
@@ -106,37 +109,91 @@ class UserController extends Controller
     {
         $searchTerm = $request->input('search_term');
         $searchColumns = $request->input('search_columns', []);
+        $users = $this->performSearch($searchTerm, $searchColumns);
+        return view('all-users', compact('users'));
+    }
+
+    public function performSearch($searchTerm, $searchColumns)
+    {
         $query = $this->userRepository->allWithRelations(['teams', 'role', 'vacationRequests']);
 
         if ($searchTerm) {
             $query->where(function ($q) use ($searchTerm, $searchColumns) {
-                if (in_array('name', $searchColumns)) {
-                    $q->orWhere('name', 'LIKE', "%{$searchTerm}%");
-                }
-                if (in_array('email', $searchColumns)) {
-                    $q->orWhere('email', 'LIKE', "%{$searchTerm}%");
-                }
-                if (in_array('role', $searchColumns)) {
-                    $q->orWhereHas('role', function ($roleQuery) use ($searchTerm) {
-                        $roleQuery->where('role_name', 'LIKE', "%{$searchTerm}%");
-                    });
-                }
-                if (in_array('teams', $searchColumns)) {
-                    $q->orWhereHas('teams', function ($teamQuery) use ($searchTerm) {
-                        $teamQuery->where('name', 'LIKE', "%{$searchTerm}%");
-                    });
-                }
-                if (in_array('vacationRequests', $searchColumns)) {
-                    $q->orWhereHas('vacationRequests', function ($vacationQuery) use ($searchTerm) {
-                        $vacationQuery->where('start_date', 'LIKE', "%{$searchTerm}%")
-                            ->orWhere('end_date', 'LIKE', "%{$searchTerm}%");
-                    });
+                $availableColumns = ['name', 'email', 'role', 'teams', 'vacationRequests'];
+                $searchableColumns = empty($searchColumns) ? $availableColumns : $searchColumns;
+
+                foreach ($searchableColumns as $column) {
+                    if ($column === 'role') {
+                        $q->orWhereHas('role', function ($roleQuery) use ($searchTerm) {
+                            $roleQuery->where('role_name', 'LIKE', "%{$searchTerm}%");
+                        });
+                    } elseif ($column === 'teams') {
+                        $q->orWhereHas('teams', function ($teamQuery) use ($searchTerm) {
+                            $teamQuery->where('name', 'LIKE', "%{$searchTerm}%");
+                        });
+                    } elseif ($column === 'vacationRequests') {
+                        $q->orWhereHas('vacationRequests', function ($vacationQuery) use ($searchTerm) {
+                            $vacationQuery->where('start_date', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('end_date', 'LIKE', "%{$searchTerm}%");
+                        });
+                    } else {
+                        $q->orWhere($column, 'LIKE', "%{$searchTerm}%");
+                    }
                 }
             });
         }
 
-        $users = $query->get();
-        return view('all-users', compact('users'));
+        return $query->get();
+    }
+
+    public function downloadCSV(Request $request)
+    {
+        $cacheKey = 'download_searched_users_' . auth()->id(); //every user has his personal key->every user can download 2 times/min
+        $downloadCount = Cache::get($cacheKey, 0);
+        if ($downloadCount >= 2) {
+            abort(429);
+        }
+
+        Cache::put($cacheKey, $downloadCount + 1, 60);
+
+        $searchTerm = $request->input('search_term');
+        $searchColumns = $request->input('search_columns', []);
+        $users = $this->performSearch($searchTerm, $searchColumns);
+
+        $csvData = "ID,Name,Email,Role,Teams,Vacation Requests\n";
+        foreach ($users as $user) {
+            $role = $user->role->role_name ?? 'N/A';
+            $teams = $user->teams->pluck('name')->implode(', ') ?? 'N/A';
+            $vacationRequests = $user->vacationRequests->map(function ($request) {
+                return "{$request->start_date} - {$request->end_date}";
+            })->implode(' | ');
+            $vacationRequests = $vacationRequests ?: 'N/A';
+            $csvData .= "{$user->id},{$user->name},{$user->email},{$role},{$teams},{$vacationRequests}\n";
+        }
+
+        $fileName = 'users_' . now()->format('Ymd_His') . '.csv';
+        Storage::disk('local')->put($fileName, $csvData);
+
+        return Storage::download($fileName);
+    }
+
+    public function downloadPDF(Request $request)
+    {
+        $cacheKey = 'download_searched_users_' . auth()->id();
+        $downloadCount = Cache::get($cacheKey, 0);
+        if ($downloadCount >= 2) {
+            abort(429);
+        }
+
+        Cache::put($cacheKey, $downloadCount + 1, 60);
+
+        $searchTerm = $request->input('search_term');
+        $searchColumns = $request->input('search_columns', []);
+
+        $users = $this->performSearch($searchTerm, $searchColumns);
+        $pdf = PDF::loadView('all-users-pdf', compact('users'));
+
+        return $pdf->download('users_' . now()->format('Ymd_His') . '.pdf');
     }
 
 }

@@ -11,6 +11,7 @@
 <body>
 
     <body>
+    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Back</a>
         <div class="search-container">
             <h1>Search Users</h1>
             <form action="{{ route('users.search') }}" method="GET">
@@ -25,7 +26,24 @@
 
                 <button type="submit">Search</button>
             </form>
+
+            <form method="GET" action="{{ route('users.search.download.csv') }}">
+                <input type="hidden" name="search_term" value="{{ request('search_term') }}">
+                @foreach (request('search_columns', []) as $column)
+                    <input type="hidden" name="search_columns[]" value="{{ $column }}">
+                @endforeach
+                <button type="submit">Download CSV</button>
+            </form>
+
+            <form method="GET" action="{{ route('users.search.download.pdf') }}">
+                <input type="hidden" name="search_term" value="{{ request('search_term') }}">
+                @foreach (request('search_columns', []) as $column)
+                    <input type="hidden" name="search_columns[]" value="{{ $column }}">
+                @endforeach
+                <button type="submit">Download PDF</button>
+            </form>
         </div>
+
 
         <div class="user-container">
             <h1>All Users</h1>

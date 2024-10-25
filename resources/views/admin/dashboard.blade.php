@@ -18,9 +18,10 @@
             <a href="{{ route('allUsers') }}" class="btn btn-primary">Show all users</a>
             <a href="{{ route('user.showResetPasswordForm') }}" class="btn btn-primary">Reset Password</a>
             <a href="{{ route('user.add') }}" class="btn btn-primary">Add user</a>
-            <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display:inline;">
+            <a href="{{ route('logout') }}" class="btn btn-logout"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
-                <button type="submit" class="btn-logout">Logout</button>
             </form>
         </div>
     </div>

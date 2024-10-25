@@ -70,6 +70,7 @@ p {
 
 .btn-logout:hover {
     background-color: #731a54;
+    color: white;
 }
 
 .success-alert {
@@ -297,6 +298,8 @@ button:hover {
     display: flex;
     justify-content: space-evenly;
     width: 100%;
+    gap: 12px;
+    margin: 0 12px;
 }
 
 .search-container {

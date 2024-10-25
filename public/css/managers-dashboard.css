@@ -1,5 +1,5 @@
 body {
-    background-image: url('/images/background.jpg');
+    background-image: url("/images/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -30,7 +30,6 @@ p {
     color: #ffffff;
     margin-bottom: 30px;
 }
-
 
 .top-right-buttons .btn {
     margin-left: 10px;
@@ -66,7 +65,6 @@ p {
     z-index: 1050;
     width: 300px;
 }
-
 
 .card {
     background-color: rgba(0, 0, 0, 0.5);
@@ -161,7 +159,7 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 0; 
+    margin: 20px 0;
 }
 
 .pagination {
@@ -174,7 +172,8 @@ p {
     margin: 0 5px;
 }
 
-.pagination a, .pagination span {
+.pagination a,
+.pagination span {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -186,7 +185,8 @@ p {
     align-items: center;
 }
 
-.pagination a:hover, .pagination span:hover {
+.pagination a:hover,
+.pagination span:hover {
     background-color: #731a54;
     color: white;
 }
@@ -207,10 +207,11 @@ p {
     color: #6c757d;
 }
 
-.pagination a svg, .pagination span svg {
-    width: 16px !important; 
-    height: 16px !important; 
-    fill: #a83273; 
+.pagination a svg,
+.pagination span svg {
+    width: 16px !important;
+    height: 16px !important;
+    fill: #a83273;
     vertical-align: middle;
 }
 
@@ -275,6 +276,8 @@ button:hover {
     display: flex;
     justify-content: space-around;
     width: 100%;
+    gap: 12px;
+    margin: 0 12px;
 }
 
 .search-container {
