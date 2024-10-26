@@ -12,15 +12,13 @@ use App\Http\Requests\SendNewVacationRequest;
 class VacationRequestController extends Controller
 {
     public $user;
-    public $remainingVacationDays = 0;
     public $vacationRequests;
 
     public function __construct(
         protected UserRepository $userRepository
     ) {
         $this->user = $this->userRepository->getAuthenticatedUser();
-        $vacationRequests = VacationRequest::where('user_id', $this->user->id)->get();
-        $this->remainingVacationDays($vacationRequests);
+        $this->vacationRequests = VacationRequest::where('user_id', $this->user->id)->get();
     }
 
     public function remainingVacationDays($vacationRequests)
@@ -33,13 +31,13 @@ class VacationRequestController extends Controller
         }
 
         $remainingVacationDays = $this->user->annual_leave_days - $pendingDays;
-        $this->remainingVacationDays = max($remainingVacationDays, 0);
+        return max($remainingVacationDays, 0);
     }
 
     public function createRequestForm()
     {
         $user = $this->user;
-        $remainingVacationDays = $this->remainingVacationDays;
+        $remainingVacationDays = $this->remainingVacationDays($this->vacationRequests);
 
         return view('make-new-vacation-request', compact('user', 'remainingVacationDays'));
     }
@@ -53,10 +51,8 @@ class VacationRequestController extends Controller
     public function sendRequest(Request $request)
     {
         $vacationRequests = $this->getVacationRequests();
-        $this->remainingVacationDays($vacationRequests);
-
         $newRequest = new SendNewVacationRequest();
-        $newRequest->setRemainingVacationDays($this->remainingVacationDays);
+        $newRequest->setRemainingVacationDays($this->remainingVacationDays($vacationRequests));
 
 
         $validator = Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
@@ -81,7 +77,6 @@ class VacationRequestController extends Controller
         return response()->json(['message' => 'Vacation request successfully submitted.']);
     }
 
-
     protected function getVacationRequests()
     {
         return VacationRequest::where('user_id', $this->user->id)->get();
@@ -90,7 +85,7 @@ class VacationRequestController extends Controller
     protected function validateRequest(Request $request)
     {
         $newRequest = new SendNewVacationRequest();
-        $newRequest->setRemainingVacationDays($this->remainingVacationDays);
+        $newRequest->setRemainingVacationDays($this->remainingVacationDays($this->vacationRequests));
         return Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
     }
 
