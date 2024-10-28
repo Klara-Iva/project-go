@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
-use App\Repositories\UserRepository;
+use App\Interfaces\UserRepositoryInterface;
 
 class AuthController extends Controller
 {
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepositoryInterface $userRepository
     ) {
         //
     }

@@ -7,9 +7,33 @@
     <title>Request Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/vacation-request-details.css') }}">
+    <style>
+        .alert-success {
+            position: absolute;
+            top: 20px;
+            position: 0 0;
+            z-index: 1050;
+            width: 500px;
+        }
+
+        .alert-danger {
+            position: fixed;
+            top: 20px;
+            position: 0 0;
+            z-index: 1050;
+            width: 300px;
+        }
+    </style>
 </head>
 
 <body>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
 
     <div class="container">
         <h2>Request Details</h2>
@@ -34,6 +58,12 @@
                 <p><strong>Project Manager's Comment:</strong> {{ $vacationRequest->project_manager_comment }}</p>
             @endif
         </div>
+        <form action="{{ route('deleteVacationRequest', $vacationRequest->id) }}" method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this vacation request?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Delete Request</button>
+        </form>
     </div>
 </body>
 

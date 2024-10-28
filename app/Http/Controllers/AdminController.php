@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\UserRepositoryInterface;
 use App\Models\Team;
 use App\Models\Role;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
+
 
 class AdminController extends Controller
 {
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepositoryInterface $userRepository
     ) {
         //
     }

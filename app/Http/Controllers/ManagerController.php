@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\VacationRequest;
+use App\Interfaces\UserRepositoryInterface;
+use App\Interfaces\VacationRepositoryInterface;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
 
 class ManagerController extends Controller
 {
     protected $user;
 
     public function __construct(
-        protected UserRepository $userRepository,
+        protected UserRepositoryInterface $userRepository,
+        protected VacationRepositoryInterface $vacationRepository,
         protected UserFilterController $userFilterController
     ) {
         $this->user = $this->userRepository->getAuthenticatedUser();
@@ -41,7 +42,7 @@ class ManagerController extends Controller
 
     public function showVacationRequestDetails($id)
     {
-        $request = VacationRequest::with('user')->findOrFail($id);
+        $request =  $this->vacationRepository->findWithUserOrFail($id);
 
         return view('managers.approve-vacation-request', compact('request'));
     }
@@ -49,7 +50,7 @@ class ManagerController extends Controller
     public function handleApproval(Request $request, $id)
     {
         $user = $this->user;
-        $vacationRequest = VacationRequest::findOrFail($id);
+        $vacationRequest = $this->vacationRepository->find($id);
 
         $comment = $request->input('comment', null);
         if ($user->role_id == 2) {
@@ -85,8 +86,7 @@ class ManagerController extends Controller
         $user = $this->user;
         $teamIds = $user->teams->pluck('id')->toArray();
         $teamUsers = $this->userRepository->getUsersByTeamIds($teamIds);
-        $vacationRequests = VacationRequest::whereIn('user_id', $teamUsers)->with('user')->get();
-
+        $vacationRequests = $this->vacationRepository->getByTeamUsers($teamUsers);
         return view('managers.all-team-requests', compact('user', 'vacationRequests'));
     }
 

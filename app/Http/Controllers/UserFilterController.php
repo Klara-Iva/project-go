@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
 
 class UserFilterController extends Controller
 {
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepositoryInterface $userRepository
     ) {
         //
     }

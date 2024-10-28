@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 class DownloadController extends Controller
 {
     public function __construct(
-        protected SearchServiceInterface $searchController
+        protected SearchServiceInterface $searchSevice
     ) {
         //
     }
@@ -28,7 +28,7 @@ class DownloadController extends Controller
 
         $searchTerm = $request->input('search_term');
         $searchColumns = $request->input('search_columns', []);
-        $users = $this->searchController->performSearch($searchTerm, $searchColumns);
+        $users = $this->searchSevice->performSearch($searchTerm, $searchColumns);
 
         $csvData = "ID,Name,Email,Role,Teams,Vacation Requests\n";
         foreach ($users as $user) {
@@ -60,7 +60,7 @@ class DownloadController extends Controller
         $searchTerm = $request->input('search_term');
         $searchColumns = $request->input('search_columns', []);
 
-        $users = $this->searchController->performSearch($searchTerm, $searchColumns);
+        $users = $this->searchSevice->performSearch($searchTerm, $searchColumns);
         $pdf = PDF::loadView('all-users-pdf', compact('users'));
 
         return $pdf->download('users_' . now()->format('Ymd_His') . '.pdf');

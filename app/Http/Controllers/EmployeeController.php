@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\UserRepositoryInterface;
+use App\Interfaces\VacationRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
-use App\Models\VacationRequest;
-use App\Repositories\UserRepository;
 
 class EmployeeController extends Controller
 {
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepositoryInterface $userRepository,
+        protected VacationRepositoryInterface $vacationRepository
     ) {
         //
     }
@@ -22,7 +23,7 @@ class EmployeeController extends Controller
             $user->save();
         }
 
-        $vacationRequests = VacationRequest::with('user')->where('user_id', $userId)->get();
+        $vacationRequests = $this->vacationRepository->getByUserId($userId);
         return view('employee.dashboard', compact('user', 'vacationRequests'));
     }
 

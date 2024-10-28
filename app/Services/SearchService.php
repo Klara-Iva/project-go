@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use App\Interfaces\SearchServiceInterface;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 
-class SearchController extends Controller implements SearchServiceInterface
+class SearchService implements SearchServiceInterface
 {
+
     public function __construct(
         protected UserRepository $userRepository
     ) {
@@ -54,5 +55,6 @@ class SearchController extends Controller implements SearchServiceInterface
 
         return $query->get();
     }
+
 
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\VacationRequest;
+use App\Interfaces\UserRepositoryInterface;
+use App\Interfaces\VacationRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Events\VacationRequestSubmitted;
-use App\Repositories\UserRepository;
 use App\Http\Requests\SendNewVacationRequest;
 
 class VacationRequestController extends Controller
@@ -15,10 +15,11 @@ class VacationRequestController extends Controller
     public $vacationRequests;
 
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepositoryInterface $userRepository,
+        protected VacationRepositoryInterface $vacationRepository,
     ) {
         $this->user = $this->userRepository->getAuthenticatedUser();
-        $this->vacationRequests = VacationRequest::where('user_id', $this->user->id)->get();
+        $this->vacationRequests = $this->vacationRepository->getByUserId($this->user->id);
     }
 
     public function remainingVacationDays($vacationRequests)
@@ -44,7 +45,7 @@ class VacationRequestController extends Controller
 
     public function showRequestDetails($id)
     {
-        $vacationRequest = VacationRequest::find($id);
+        $vacationRequest = $this->vacationRepository->find($id);
         return view('employee.vacation-request-details', compact('vacationRequest'));
     }
 
@@ -79,7 +80,7 @@ class VacationRequestController extends Controller
 
     protected function getVacationRequests()
     {
-        return VacationRequest::where('user_id', $this->user->id)->get();
+        return $this->vacationRepository->getByUserId($this->user->id);
     }
 
     protected function validateRequest(Request $request)
@@ -91,10 +92,7 @@ class VacationRequestController extends Controller
 
     protected function hasOverlappingRequest($validated)
     {
-        $existingRequests = VacationRequest::where('user_id', auth()->id())
-            ->where('status', '!=', 'rejected')
-            ->get();
-
+        $existingRequests = $this->vacationRepository->getNonRejectedByUserId(auth()->id());
         foreach ($existingRequests as $existingRequest) {
             if (
                 ($validated['start_date'] >= $existingRequest->start_date && $validated['start_date'] <= $existingRequest->end_date) ||
@@ -111,21 +109,15 @@ class VacationRequestController extends Controller
 
     protected function createVacationRequest(Request $request, $validated)
     {
-        $vacationRequest = new VacationRequest();
-        $vacationRequest->user_id = $request->user()->id;
-        $vacationRequest->start_date = $validated['start_date'];
-        $vacationRequest->end_date = $validated['end_date'];
-        $vacationRequest->days_requested = $validated['days_off'];
+        $data = [
+            'user_id' => $request->user()->id,
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'days_requested' => $validated['days_off'],
+        ];
 
-        return $vacationRequest;
-    }
-    protected function redirectUserBasedOnRole(Request $request)
-    {
-        if ($request->user()->role_id == 2 || $request->user()->role_id == 3) {
-            return redirect()->route('managers.dashboard');
-        } else {
-            return redirect()->route('employee.dashboard');
-        }
+        return $this->vacationRepository->createVacationRequest($data);
+
     }
 
     protected function handleSpecialRoles(Request $request, $vacationRequest)
@@ -138,6 +130,30 @@ class VacationRequestController extends Controller
             $vacationRequest->project_manager_approved = 'approved';
         }
 
+    }
+
+    protected function redirectUserBasedOnRole(Request $request)
+    {
+        if ($request->user()->role_id == 2 || $request->user()->role_id == 3) {
+            return redirect()->route('managers.dashboard');
+        } else {
+            return redirect()->route('employee.dashboard');
+        }
+    }
+
+    public function deleteRequest(Request $request, $id)
+    {
+        $vacationRequest = $this->vacationRepository->find($id);
+        if (!$vacationRequest) {
+            return redirect()->back()->with('error', 'Vacation request not found.');
+        }
+
+        if ($vacationRequest->status === 'pending') {
+            $vacationRequest->delete();
+            return $this->redirectUserBasedOnRole($request)->with('success', 'Vacation request successfully deleted.');
+        }
+
+        return redirect()->back()->with('error', 'Cannot delete this request as it is not pending.');
     }
 
 }

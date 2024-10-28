@@ -116,7 +116,7 @@
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function (response) {
-                    alert(response.message);
+                    console.log(response.message);
                     window.location.href = document.referrer;
                 },
                 error: function (xhr) {

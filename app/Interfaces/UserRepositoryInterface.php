@@ -13,4 +13,14 @@ interface UserRepositoryInterface
     public function delete($id);
 
     public function find($id);
+
+    public function allWithRelations(array $relations);
+
+    public function findByEmail(string $email);
+
+    public function getUsersByTeamIds(array $teamIds);
+
+    public function getAuthenticatedUser();
+
+    public function getEmailsByRoleAndTeam($roleId, $teamId);
 }
