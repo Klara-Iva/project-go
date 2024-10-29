@@ -4,10 +4,10 @@ namespace App\Repositories;
 
 use App\Models\VacationRequest;
 use App\Interfaces\VacationRepositoryInterface;
+use Illuminate\Http\Request;
 
 class VacationRepository implements VacationRepositoryInterface
 {
-
     public function all()
     {
         return VacationRequest::all();
@@ -61,8 +61,15 @@ class VacationRepository implements VacationRepositoryInterface
             ->get();
     }
 
-    public function createVacationRequest(array $data)
+    public function createVacationRequest(Request $request, $validated)
     {
+        $data = [
+            'user_id' => $request->user()->id,
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'days_requested' => $validated['days_off'],
+        ];
+
         $vacationRequest = new VacationRequest();
         $vacationRequest->user_id = $data['user_id'];
         $vacationRequest->start_date = $data['start_date'];
@@ -70,6 +77,48 @@ class VacationRepository implements VacationRepositoryInterface
         $vacationRequest->days_requested = $data['days_requested'];
 
         return $vacationRequest;
+    }
+
+    public function remainingVacationDays($vacationRequests, $user)
+    {
+        $pendingDays = 0;
+        foreach ($vacationRequests as $request) {
+            if ($request->status == 'pending') {
+                $pendingDays += $request->days_requested;
+            }
+        }
+
+        $remainingVacationDays = $user->annual_leave_days - $pendingDays;
+        return max($remainingVacationDays, 0);
+    }
+
+    public function handleSpecialRoles(Request $request, $vacationRequest)
+    {
+        if ($request->user()->role_id == 2) {
+            $vacationRequest->team_leader_approved = 'approved';
+        }
+
+        if ($request->user()->role_id == 3) {
+            $vacationRequest->project_manager_approved = 'approved';
+        }
+
+    }
+
+    public function hasOverlappingRequest($validated)
+    {
+        $existingRequests = $this->getNonRejectedByUserId(auth()->id());
+        foreach ($existingRequests as $existingRequest) {
+            if (
+                ($validated['start_date'] >= $existingRequest->start_date && $validated['start_date'] <= $existingRequest->end_date) ||
+                ($validated['end_date'] >= $existingRequest->start_date && $validated['end_date'] <= $existingRequest->end_date) ||
+                ($validated['start_date'] <= $existingRequest->start_date && $validated['end_date'] >= $existingRequest->end_date)
+            ) {
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
 }

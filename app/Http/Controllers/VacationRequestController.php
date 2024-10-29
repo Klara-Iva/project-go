@@ -22,23 +22,10 @@ class VacationRequestController extends Controller
         $this->vacationRequests = $this->vacationRepository->getByUserId($this->user->id);
     }
 
-    public function remainingVacationDays($vacationRequests)
-    {
-        $pendingDays = 0;
-        foreach ($vacationRequests as $request) {
-            if ($request->status == 'pending') {
-                $pendingDays += $request->days_requested;
-            }
-        }
-
-        $remainingVacationDays = $this->user->annual_leave_days - $pendingDays;
-        return max($remainingVacationDays, 0);
-    }
-
     public function createRequestForm()
     {
         $user = $this->user;
-        $remainingVacationDays = $this->remainingVacationDays($this->vacationRequests);
+        $remainingVacationDays = $this->vacationRepository->remainingVacationDays($this->vacationRequests, $user);
 
         return view('make-new-vacation-request', compact('user', 'remainingVacationDays'));
     }
@@ -51,9 +38,9 @@ class VacationRequestController extends Controller
 
     public function sendRequest(Request $request)
     {
-        $vacationRequests = $this->getVacationRequests();
+        $vacationRequests = $this->vacationRepository->getByUserId($this->user->id);
         $newRequest = new SendNewVacationRequest();
-        $newRequest->setRemainingVacationDays($this->remainingVacationDays($vacationRequests));
+        $newRequest->setRemainingVacationDays($this->vacationRepository->remainingVacationDays($vacationRequests, $this->user));
 
 
         $validator = Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
@@ -64,12 +51,12 @@ class VacationRequestController extends Controller
 
         $validated = $validator->validated();
 
-        if ($this->hasOverlappingRequest($validated)) {
+        if ($this->vacationRepository->hasOverlappingRequest($validated)) {
             return response()->json(['errors' => ['error' => 'Your vacation request overlaps with an existing request.']], 422);
         }
 
-        $vacationRequest = $this->createVacationRequest($request, $validated);
-        $this->handleSpecialRoles($request, $vacationRequest);
+        $vacationRequest = $this->vacationRepository->createVacationRequest($request, $validated);
+        $this->vacationRepository->handleSpecialRoles($request, $vacationRequest);
         $vacationRequest->save();
 
         event(new VacationRequestSubmitted($request->user()));
@@ -78,58 +65,11 @@ class VacationRequestController extends Controller
         return response()->json(['message' => 'Vacation request successfully submitted.']);
     }
 
-    protected function getVacationRequests()
-    {
-        return $this->vacationRepository->getByUserId($this->user->id);
-    }
-
     protected function validateRequest(Request $request)
     {
         $newRequest = new SendNewVacationRequest();
-        $newRequest->setRemainingVacationDays($this->remainingVacationDays($this->vacationRequests));
+        $newRequest->setRemainingVacationDays($this->vacationRepository->remainingVacationDays($this->vacationRequests, $this->user));
         return Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
-    }
-
-    protected function hasOverlappingRequest($validated)
-    {
-        $existingRequests = $this->vacationRepository->getNonRejectedByUserId(auth()->id());
-        foreach ($existingRequests as $existingRequest) {
-            if (
-                ($validated['start_date'] >= $existingRequest->start_date && $validated['start_date'] <= $existingRequest->end_date) ||
-                ($validated['end_date'] >= $existingRequest->start_date && $validated['end_date'] <= $existingRequest->end_date) ||
-                ($validated['start_date'] <= $existingRequest->start_date && $validated['end_date'] >= $existingRequest->end_date)
-            ) {
-                return true;
-            }
-
-        }
-
-        return false;
-    }
-
-    protected function createVacationRequest(Request $request, $validated)
-    {
-        $data = [
-            'user_id' => $request->user()->id,
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'days_requested' => $validated['days_off'],
-        ];
-
-        return $this->vacationRepository->createVacationRequest($data);
-
-    }
-
-    protected function handleSpecialRoles(Request $request, $vacationRequest)
-    {
-        if ($request->user()->role_id == 2) {
-            $vacationRequest->team_leader_approved = 'approved';
-        }
-
-        if ($request->user()->role_id == 3) {
-            $vacationRequest->project_manager_approved = 'approved';
-        }
-
     }
 
     protected function redirectUserBasedOnRole(Request $request)

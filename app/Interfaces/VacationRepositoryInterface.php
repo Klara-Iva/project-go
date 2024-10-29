@@ -2,6 +2,8 @@
 
 namespace App\Interfaces;
 
+use Illuminate\Http\Request;
+
 interface VacationRepositoryInterface
 {
     public function all();
@@ -22,5 +24,11 @@ interface VacationRepositoryInterface
 
     public function getNonRejectedByUserId($userId);
 
-    public function createVacationRequest(array $data);
+    public function remainingVacationDays($vacationRequests, $user);
+
+    public function createVacationRequest(Request $request, $validated);
+
+    public function handleSpecialRoles(Request $request, $vacationRequest);
+
+    public function hasOverlappingRequest($validated);
 }
