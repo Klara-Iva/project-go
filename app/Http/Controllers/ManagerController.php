@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Interfaces\UserRepositoryInterface;
 use App\Interfaces\VacationRepositoryInterface;
 use Illuminate\Http\Request;
+use App\Services\FilterUsersService;
 
 class ManagerController extends Controller
 {
@@ -13,7 +14,7 @@ class ManagerController extends Controller
     public function __construct(
         protected UserRepositoryInterface $userRepository,
         protected VacationRepositoryInterface $vacationRepository,
-        protected UserFilterController $userFilterController
+        protected FilterUsersService $userFilterController
     ) {
         $this->user = $this->userRepository->getAuthenticatedUser();
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use App\Interfaces\SearchServiceInterface;
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Cache;
 
-class DownloadController extends Controller
+class DownloadService
 {
     public function __construct(
         protected SearchServiceInterface $searchSevice
@@ -18,7 +18,7 @@ class DownloadController extends Controller
 
     public function downloadCSV(Request $request)
     {
-        $cacheKey = 'download_searched_users_' . auth()->id(); //every user has his personal key->every user can download 2 times/min
+        $cacheKey = 'download_searched_users_' . auth()->id();
         $downloadCount = Cache::get($cacheKey, 0);
         if ($downloadCount >= 2) {
             abort(429);
@@ -65,4 +65,5 @@ class DownloadController extends Controller
 
         return $pdf->download('users_' . now()->format('Ymd_His') . '.pdf');
     }
+    
 }

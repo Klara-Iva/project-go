@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DownloadController;
+use App\Services\DownloadService;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\AdminController;
@@ -61,6 +61,6 @@ Route::middleware(EnsureUserHasRole::class . ':Admin')->group(function () {
     Route::post('/user/{id}', [UserController::class, 'updateUser'])->name('user.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('user.destroy');
     Route::get('/project-go/users/search', [SearchService::class, 'search'])->name('users.search');
-    Route::get('/project-go/users/search/download-csv', [DownloadController::class, 'downloadCSV'])->name('users.search.download.csv');
-    Route::get('/project-go/users/search/download-pdf', [DownloadController::class, 'downloadPDF'])->name('users.search.download.pdf');
+    Route::get('/project-go/users/search/download-csv', [DownloadService::class, 'downloadCSV'])->name('users.search.download.csv');
+    Route::get('/project-go/users/search/download-pdf', [DownloadService::class, 'downloadPDF'])->name('users.search.download.pdf');
 });

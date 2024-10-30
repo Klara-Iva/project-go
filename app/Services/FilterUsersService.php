@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services;
 
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
 
-class UserFilterController extends Controller
+class FilterUsersService
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository
@@ -27,6 +27,38 @@ class UserFilterController extends Controller
         $query = $this->applySorting($query, $sortBy, $sortOrder);
 
         return $this->paginateResults($query, $perPage, $request);
+    }
+
+    public function getFilteredUsesForAdminDashboard(Request $request)
+    {
+        $searchTerm = $request->input('search_term');
+        $searchColumns = $request->input('search_columns', []);
+        $sortOrder = $request->input('sort_order', 'asc');
+        $sortBy = $request->input('sort_by', 'name');
+        $perPage = $request->input('per_page', 15);
+
+        $query = $this->userRepository->allWithRelations(['role', 'teams', 'vacationRequests']);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm, $searchColumns) {
+                if (in_array('name', $searchColumns)) {
+                    $q->orWhere('name', 'LIKE', "%{$searchTerm}%");
+                }
+                if (in_array('email', $searchColumns)) {
+                    $q->orWhere('email', 'LIKE', "%{$searchTerm}%");
+                }
+            });
+        }
+
+        if ($sortBy === 'role') {
+            $query->join('roles', 'users.role_id', '=', 'roles.id')
+                ->select('users.*')
+                ->orderBy('roles.role_name', $sortOrder);
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+
+        return $query->paginate($perPage)->appends($request->all());
     }
 
     private function getBaseUserQuery()

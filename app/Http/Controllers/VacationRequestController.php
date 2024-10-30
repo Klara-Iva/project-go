@@ -42,7 +42,6 @@ class VacationRequestController extends Controller
         $newRequest = new SendNewVacationRequest();
         $newRequest->setRemainingVacationDays($this->vacationRepository->remainingVacationDays($vacationRequests, $this->user));
 
-
         $validator = Validator::make($request->all(), $newRequest->rules(), $newRequest->messages());
 
         if ($validator->fails()) {
@@ -65,6 +64,7 @@ class VacationRequestController extends Controller
         return response()->json(['message' => 'Vacation request successfully submitted.']);
     }
 
+    //why isnt this used?
     protected function validateRequest(Request $request)
     {
         $newRequest = new SendNewVacationRequest();
